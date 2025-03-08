@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace BerAuto.DataContext.Entities
 {
-    public class User
+    public class CarRental
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
         public int AddressId { get; set; }
         public Address Address { get; set; }
-        public List<Role> Roles { get; set; }
-        public int? CarRentalId { get; set; }
-        public CarRental CarRental { get; set; }
+        public List<Car> Cars { get; set; }
+        public List<Rent> Rents { get; set; }
+        public List<User> Staff { get; set; }
     }
 }
