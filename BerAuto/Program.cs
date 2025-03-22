@@ -13,7 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=adatb-mssql.mik.uni-pannon.hu,2019;Database=h10_s4buby;User Id=h10_s4buby;" +
         "Password=fwW4azqkS6;TrustServerCertificate=True;"));
 
-builder.Services.AddScoped<ICarRentalService, CarRentalService>();
+builder.Services.AddScoped<ICarService, CarService>();
 
 //swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -34,6 +34,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

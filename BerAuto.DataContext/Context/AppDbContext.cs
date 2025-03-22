@@ -16,7 +16,6 @@ namespace BerAuto.DataContext.Context
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarCategory> CarCategories { get; set; }
-        public DbSet<CarRental> CarRentals { get; set; }
         public DbSet<Rent> Rents { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
