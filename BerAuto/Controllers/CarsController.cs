@@ -34,6 +34,7 @@ namespace BerAuto.Controllers
         public IActionResult GetCar(int idx)
         {
             var result = _carService.GetCarById(idx);
+            if (result is null) return BadRequest("No such car");
 
             return Ok(result);
         }

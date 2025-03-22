@@ -15,6 +15,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<ICarService, CarService>();
 
+
+// AutoMapper Config
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 //swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
