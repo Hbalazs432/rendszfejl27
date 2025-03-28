@@ -11,7 +11,8 @@ namespace BerAuto.DataContext.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
+        //public string Password {get;set;} csak még nincs hash és csak így megy a regisztrálás
         public string Phone { get; set; }
         public int AddressId { get; set; }
         public Address Address { get; set; }

@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         "Password=fwW4azqkS6;TrustServerCertificate=True;"));
 
 builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 // AutoMapper Config

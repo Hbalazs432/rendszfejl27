@@ -17,11 +17,19 @@ namespace BerAuto.Services
             CreateMap<UserCreateDto, User>();
             CreateMap<UserUpdateDto, User>();
 
-            CreateMap<CarCategory, CreateCarCategoryDto>().ReverseMap();
-            CreateMap<CarCategory, CarCategoryDto>();
+            CreateMap<Address, AddressDto>().ReverseMap();
+            CreateMap<AddressCreateDto, Address>();
 
-            CreateMap<Car, CarCreateDto>().ReverseMap();
-            CreateMap<Car, CarDto>();
+            CreateMap<Role, RoleDto>().ReverseMap();
+            CreateMap<RoleCreateDto, Role>();
+            CreateMap<RoleUpdateDto, Role>();
+
+            CreateMap<CarCategory, CarCategoryDto>().ReverseMap();
+            CreateMap<CarCategoryCreateDto, CarCategory>();
+            CreateMap<CarCategoryUpdateDto, CarCategory>();
+
+            CreateMap<Car, CarDto>().ReverseMap();
+            CreateMap<Car, CarCreateDto>();
             CreateMap<CarUpdateDto, Car>();
         }
     }
