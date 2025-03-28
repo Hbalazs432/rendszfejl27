@@ -13,12 +13,15 @@ namespace BerAuto.Services
 {
     public interface ICarService
     {
-        List<Car> GetAllCars();
-        Car GetCarById(int idx);
+        Task<IList<CarDto>> GetAllCars();
+        Task<CarDto> GetCarById(int idx);
+        Task<CarDto> CreateCar(CarCreateDto car);
+        Task<CarDto> UpdateCar(int id, CarUpdateDto car);
 
         Task<CarCategoryDto> CreateCarCategoryAsync(CreateCarCategoryDto categoryDto);
         Task<IList<CarCategoryDto>> GetAllCarCategoriesAsync();
         Task<CarCategoryDto> UpdateCarCategoryAsync(int categoryId, string categoryName);
+
     }
     public class CarService : ICarService
     {
@@ -29,14 +32,35 @@ namespace BerAuto.Services
             _context = context;
             _mapper = mapper;
         }
-        public List<Car> GetAllCars()
+        public async Task<IList<CarDto>> GetAllCars()
         {
-            return _context.Cars.ToList();
+            var cars = await _context.Cars.Include(c =>c.CarCategory).ToListAsync();
+            return _mapper.Map<IList<CarDto>>(cars);
         }
 
-        public Car GetCarById(int idx)
+        public async Task<CarDto> GetCarById(int idx)
         {
-            return _context.Cars.Find(idx);
+            var car = await _context.Cars.Include(c => c.CarCategory).FirstOrDefaultAsync(c => c.Id == idx);
+            return _mapper.Map<CarDto>(car);
+        }
+        public async Task<CarDto> CreateCar(CarCreateDto car)
+        {
+            var res = _mapper.Map<Car>(car);
+            await _context.Cars.AddAsync(res);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<CarDto>(res);
+        }
+        public async Task<CarDto> UpdateCar(int id, CarUpdateDto carDto)
+        {
+            var car = await _context.Cars.FirstOrDefaultAsync(c=>c.Id==id);
+            if (car == null)
+            {
+                throw new KeyNotFoundException("Car not found.");
+            }
+            _mapper.Map(carDto,car);
+            _context.Cars.Update(car);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<CarDto>(car);
         }
 
         public async Task<CarCategoryDto> CreateCarCategoryAsync(CreateCarCategoryDto categoryDto)
