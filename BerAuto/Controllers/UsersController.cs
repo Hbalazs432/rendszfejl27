@@ -38,6 +38,25 @@ namespace BerAuto.Controllers
             return Ok(res);
         }
 
+        [HttpDelete("delete-role-{id}")]
+        public async Task<IActionResult> DeleteRole(int id)
+        {
+            try
+            {
+                var res = await _userService.DeleteRoleAsync(id);
+
+                if (res)
+                    return NoContent();
+
+            }
+            catch(Exception ex)
+            {
+                return NotFound();
+            }
+
+            return NotFound();
+        }
+
         [HttpGet("roles")]
         public async Task<IActionResult> ListRoles()
         { 

@@ -16,6 +16,8 @@ namespace BerAuto.Services
     {
         Task<RoleDto> CreateRoleAsync(RoleCreateDto roleCreateDto);
         Task<RoleDto> UpdateRoleAsync(int id,RoleUpdateDto roleUpdateDto);
+
+        Task<bool> DeleteRoleAsync(int id);
         Task<IList<RoleDto>> GetAllRolesAsync();
 
         Task<UserDto> RegisterUserAsync(UserCreateDto userCreateDto);
@@ -134,6 +136,18 @@ namespace BerAuto.Services
                 throw new KeyNotFoundException("User not found!");
             }
             return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<bool> DeleteRoleAsync(int id)
+        {
+            var role = await _context.Roles.FindAsync(id);
+
+            if (role == null)
+                throw new Exception("Role not found!");
+
+            _context.Roles.Remove(role);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
