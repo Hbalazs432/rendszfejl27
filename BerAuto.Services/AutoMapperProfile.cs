@@ -31,6 +31,10 @@ namespace BerAuto.Services
             CreateMap<Car, CarDto>().ReverseMap();
             CreateMap<Car, CarCreateDto>();
             CreateMap<CarUpdateDto, Car>();
+
+            CreateMap<Rent, RentDto>().ReverseMap();
+            CreateMap<Rent, RentCreateDto>().ReverseMap();
+            //CreateMap<RentUpdateDto, Rent>();
         }
     }
 }
