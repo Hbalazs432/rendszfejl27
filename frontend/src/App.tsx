@@ -4,9 +4,10 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import User from './Components/User';
 import Admin from './Components/Admin';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 function App() {
-
   return (
     <>
     <Router>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/user" element={<User />} />
       </Routes>
     </Router>
+          <ToastContainer position='bottom-center' theme='dark'/>
     </>
   )
 }

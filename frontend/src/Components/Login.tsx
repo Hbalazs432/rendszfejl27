@@ -1,17 +1,38 @@
 import React from "react";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {toast} from 'react-toastify';
+
 
 function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent<HTMLElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
-    console.log(email, password);
-    //GET METHOD
-  };
+    try{
+      //GET METHOD. ez itt egy teszt, majd ki kell cserélni
+      const response = await fetch("http://localhost:5001/register?email=" + email);
+      if (!response.ok) throw new Error("Network response was not ok");
+      const data = await response.json();
+      console.log(data);
+      if (data.length == 0){
+        toast.error("Nem található ilyen felhasználó!");
+        return;
+      }
+      const user = data[0];
+      if(user.password !== password){
+        toast.error("Hibás email cím vagy jelszó!");
+        return;
+      }
+      toast.success("Sikeres bejelentkezés!");
+      navigate('/user')
+    }catch(error){
+      console.log("Hiba történt", error);
+    }
+}
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -29,7 +50,7 @@ function Login() {
         <div className="my-5">
           <label className="block mb-2 text-sm font-medium text-gray-900">email cím</label>
           <input
-            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-300  dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-300  dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
             type="email"
             value={email}
             onChange={handleEmailChange}
@@ -38,7 +59,7 @@ function Login() {
           <div className="my-5">
           <label className="block mb-2 text-sm font-medium text-gray-900">jelszó</label>
           <input
-            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-300  dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-gray-300  dark:placeholder-gray-400  dark:focus:ring-blue-500 dark:focus:border-blue-500"
             type="password"
             value={password}
             onChange={handlePasswordChange}
