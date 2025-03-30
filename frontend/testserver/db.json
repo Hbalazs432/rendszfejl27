@@ -2,8 +2,16 @@
   "register": [
     {
       "id": "7e7c",
-      "email": "331312@gmail.com",
-      "password": "12313"
+      "email": "bence@gmail.com",
+      "password": "123",
+      "address": {
+        "country": "America",
+        "street": "st 22",
+        "city": "Ny",
+        "state": "Ny",
+        "zip": "1111"
+      },
+      "phone_number": "06707715953"
     },
     {
       "id": "bfd5",

@@ -28,7 +28,7 @@ function Login() {
         return;
       }
       toast.success("Sikeres bejelentkezés!");
-      navigate('/user')
+      navigate('/user', {state: {user: data[0]}});
     }catch(error){
       console.log("Hiba történt", error);
     }
