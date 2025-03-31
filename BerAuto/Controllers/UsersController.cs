@@ -84,6 +84,13 @@ namespace BerAuto.Controllers
             return Ok(res);
         }
 
+        [HttpPut("update-phone-{id}")]
+        public async Task<IActionResult> UpdatePhone(int id, [FromBody] UpdatePhoneDto updatePhoneDto)
+        {
+            var res = await _userService.UpdatePhoneAsync(id, updatePhoneDto);
+            return Ok(res);
+        }
+
         [HttpGet("/{id}")]
         public async Task<IActionResult> GetUser(int id)
         { 

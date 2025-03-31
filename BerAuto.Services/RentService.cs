@@ -40,7 +40,7 @@ namespace BerAuto.Services
             }
             var rent = _mapper.Map<Rent>(rentCreateDto);
             rent.UserId = userId;
-            rent.RentStatus = 0;
+            rent.RentStatus = RentStatus.Pending;
             rent.Email = user.Email;
             rent.AddressId = user.AddressId;
 

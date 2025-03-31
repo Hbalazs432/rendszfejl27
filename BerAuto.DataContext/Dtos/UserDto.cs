@@ -56,4 +56,9 @@ namespace BerAuto.DataContext.Dtos
         [Required]
         public string Password { get; set; }
     }
+
+    public class UpdatePhoneDto
+    {
+        public string Phone { get; set; }
+    }
 }

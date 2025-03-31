@@ -23,6 +23,7 @@ namespace BerAuto.Services
         Task<UserDto> RegisterUserAsync(UserCreateDto userCreateDto);
         Task<UserDto> UpdateProfileAsync(int id,UserUpdateDto userUpdateDto);
         Task<UserDto> UpdateAddressAsync(int id, AddressCreateDto addressCreateDto);
+        Task<UserDto> UpdatePhoneAsync(int id, UpdatePhoneDto updatePhoneDto);
         Task<UserDto> GetUserAsync(int id);
     }
 
@@ -123,6 +124,20 @@ namespace BerAuto.Services
             }
             user.Address= _mapper.Map<Address>(addressCreateDto);
             _context.Users.Update(user);    
+
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<UserDto>(user);
+        }
+        public async Task<UserDto> UpdatePhoneAsync(int id, UpdatePhoneDto updatePhoneDto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+            user.Phone = updatePhoneDto.Phone;
+            _context.Users.Update(user);
 
             await _context.SaveChangesAsync();
 
