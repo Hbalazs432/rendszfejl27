@@ -23,5 +23,29 @@
       "email": "duba@gmail.com",
       "password": "12345"
     }
-  ]
+  ], 
+  "cars":{
+    "1": {
+      "id": "1",
+      "brand": "BMW",
+      "model": "X5",
+      "year": 2020,
+      "price": 50000,
+      "mileage": 20000,
+      "color": "Black",
+      "description": "A luxury SUV with advanced features.",
+      "image_url": "/images/bmw_x5.jpg"
+    },
+    "2": {
+      "id": "2",
+      "brand": "Audi",
+      "model": "A6",
+      "year": 2019,
+      "price": 45000,
+      "mileage": 30000,
+      "color": "White",
+      "description": "A premium sedan with a sleek design.",
+      "image_url": "/images/audi_a6.jpg"
+    }
+  }
 }

@@ -1,5 +1,7 @@
 import React, { useRef, FormEvent, useState } from "react";
 import { PropagateLoader } from "react-spinners";
+import {motion} from 'framer-motion';
+
 
 function Registration() {
   const [email, setEmail] = useState<string>("");
@@ -45,7 +47,8 @@ function Registration() {
   };
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="overflow-hidden">
+    <motion.div initial={{opacity: 2, scale: 0}} animate={{ opacity: 2, scale: 1}} className="h-screen w-screen flex justify-center items-center">
       {isPending ? (
         <PropagateLoader color="#0030ff" />
       ) : (
@@ -75,6 +78,7 @@ function Registration() {
           </div>
         </form>
       )}
+    </motion.div>
     </div>
   );
 }

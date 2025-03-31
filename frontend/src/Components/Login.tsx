@@ -2,7 +2,7 @@ import React from "react";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify';
-
+import {motion} from 'framer-motion'; 
 
 function Login() {
   const [email, setEmail] = useState<string>("");
@@ -42,7 +42,8 @@ function Login() {
   };
 
   return (
-    <div className="h-screen w-screen flex justify-center items-center">
+    <div className="overflow-hidden">
+    <motion.div initial={{opacity: 2, scale: 0}} animate={{opacity: 2, scale: 1}} className="h-screen w-screen flex justify-center items-center">
 
       <form onSubmit={handleSubmit} className="w-96 mx-auto  border-2 rounded-lg p-10 shadow-light">
         <h1 className="text-black font-bold text-center text-2xl mb-10">Bejelentkezés</h1>
@@ -70,7 +71,8 @@ function Login() {
           Nincs még fiókod? <a href="/" className="hover:underline">Regisztrálj</a>
           </div>
       </form>
-    </div>
+    </motion.div>
+  </div>
   );
 }
 
