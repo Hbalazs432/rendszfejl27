@@ -33,16 +33,19 @@ namespace BerAuto.Services
         }
         public async Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null && rentCreateDto.Email == null)
             {
-                throw new KeyNotFoundException($"User with ID {userId} not found.");
+                throw new KeyNotFoundException($"Either userId or an email has to be provided.");
             }
+
             var rent = _mapper.Map<Rent>(rentCreateDto);
-            rent.UserId = userId;
             rent.RentStatus = RentStatus.Pending;
-            rent.Email = user.Email;
-            rent.AddressId = user.AddressId;
+            if (user != null)
+            {
+                rent.UserId = userId;
+                rent.AddressId = user.AddressId;
+            }
 
             await _context.Rents.AddAsync(rent);
             await _context.SaveChangesAsync();
