@@ -21,6 +21,11 @@ namespace BerAuto.Services
         Task<CarCategoryDto> CreateCarCategoryAsync(CarCategoryCreateDto categoryDto);
         Task<IList<CarCategoryDto>> GetAllCarCategoriesAsync();
         Task<CarCategoryDto> UpdateCarCategoryAsync(int categoryId, CarCategoryUpdateDto categoryDto);
+        Task<IList<CarDto>> GetAvailableCarsAsync();
+        Task<bool> ChangeStatusRented(int carId);
+        Task<bool> ChangeStatusWithCustomer(int carId);
+        Task<bool> ChangeStatusAvailable(int carId);
+        Task<bool> DeleteCar(int carId);
 
     }
     public class CarService : ICarService
@@ -38,6 +43,13 @@ namespace BerAuto.Services
             return _mapper.Map<IList<CarDto>>(cars);
         }
 
+        public async Task<IList<CarDto>> GetAvailableCarsAsync()
+        {
+            var cars = await _context.Cars.Include(c => c.CarCategory).
+                Where(c => c.Status == Status.Available).ToListAsync();
+            return _mapper.Map<IList<CarDto>>(cars);
+        }
+
         public async Task<CarDto> GetCarByIdAsync(int idx)
         {
             var car = await _context.Cars.Include(c => c.CarCategory).FirstOrDefaultAsync(c => c.Id == idx);
@@ -46,6 +58,7 @@ namespace BerAuto.Services
         public async Task<CarDto> CreateCarAsync(CarCreateDto car)
         {
             var res = _mapper.Map<Car>(car);
+            res.Status = Status.Available;
             await _context.Cars.AddAsync(res);
             await _context.SaveChangesAsync();
             return _mapper.Map<CarDto>(res);
@@ -88,6 +101,57 @@ namespace BerAuto.Services
             _context.CarCategories.Update(category);
             await _context.SaveChangesAsync();
             return _mapper.Map<CarCategoryDto>(category);
+        }
+
+        public async Task<bool> ChangeStatusRented(int carId)
+        {
+            var car = await _context.Cars.FirstOrDefaultAsync(o => o.Id == carId && o.Status == Status.Available);
+            if (car is null)
+            {
+                throw new Exception("Car not found");
+            }
+            car.Status = Status.Rented;
+            _context.Cars.Update(car);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> ChangeStatusWithCustomer(int carId)
+        {
+            var car = await _context.Cars.FirstOrDefaultAsync(o => o.Id == carId && o.Status == Status.Rented);
+            if (car is null)
+            {
+                throw new Exception("Car not found");
+            }
+            car.Status = Status.WithCustomer;
+            _context.Cars.Update(car);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> ChangeStatusAvailable(int carId)
+        {
+            var car = await _context.Cars.FirstOrDefaultAsync(o => o.Id == carId && o.Status == Status.WithCustomer);
+            if (car is null)
+            {
+                throw new Exception("Car not found");
+            }
+            car.Status = Status.Available;
+            _context.Cars.Update(car);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> DeleteCar(int carId)
+        {
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == carId && c.Status == Status.Available);
+            if (car == null)
+            {
+                throw new Exception("Car not found");
+            }
+            _context.Cars.Remove(car);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

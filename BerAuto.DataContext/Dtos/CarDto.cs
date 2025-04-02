@@ -23,6 +23,7 @@ namespace BerAuto.DataContext.Dtos
         public CarCategoryDto CarCategory { get; set; }
         public string Engine { get; set; }
         public double Price { get; set; }
+        public string Status { get; set; }
     }
 
     public class CarCreateDto
@@ -55,5 +56,6 @@ namespace BerAuto.DataContext.Dtos
         public int CarCategoryId { get; set; }
         public string Engine { get; set; }
         public double Price { get; set; }
+        public string Status { get; set; }
     }
 }

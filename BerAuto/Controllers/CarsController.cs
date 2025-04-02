@@ -31,6 +31,14 @@ namespace BerAuto.Controllers
             return Ok(result);
         }
 
+        [HttpGet("list-available-cars")]
+        public async Task<IActionResult> ListAvailableCars()
+        {
+            var result = await _carService.GetAvailableCarsAsync();
+
+            return Ok(result);
+        }
+
         [HttpGet("{idx}")]
         public async Task<IActionResult> GetCar(int idx)
         {
@@ -70,6 +78,51 @@ namespace BerAuto.Controllers
         {
             var result = await _carService.UpdateCarCategoryAsync(categoryId, categoryDto);
             return Ok(result);
+        }
+
+
+        [HttpPut("change-status-rented/{carId}")]
+        public async Task<IActionResult> ChangeStatusRented(int carId)
+        {
+            var result = await _carService.ChangeStatusRented(carId);
+            if (!result)
+            {
+                throw new Exception("Couldn't change the car's status");
+            }
+            return Ok();
+        }
+
+        [HttpPut("change-status-withcustomer/{carId}")]
+        public async Task<IActionResult> ChangeStatusWithCustomer(int carId)
+        {
+            var result = await _carService.ChangeStatusWithCustomer(carId);
+            if (!result)
+            {
+                throw new Exception("Couldn't change the car's status");
+            }
+            return Ok();
+        }
+
+        [HttpPut("change-status-available/{carId}")]
+        public async Task<IActionResult> ChangeStatusAvailable(int carId)
+        {
+            var result = await _carService.ChangeStatusAvailable(carId);
+            if (!result)
+            {
+                throw new Exception("Couldn't change the car's status");
+            }
+            return Ok();
+        }
+
+        [HttpPut("delete-car/{carId}")]
+        public async Task<IActionResult> DeleteCar(int carId)
+        {
+            var result = await _carService.DeleteCar(carId);
+            if (!result)
+            {
+                throw new Exception("Couldn't delete the car");
+            }
+            return Ok();
         }
     }
 }

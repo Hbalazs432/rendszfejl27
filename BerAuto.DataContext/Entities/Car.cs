@@ -18,6 +18,13 @@ namespace BerAuto.DataContext.Entities
         Electronic
     }
 
+    public enum Status
+    {
+        Available,
+        Rented,
+        WithCustomer
+    }
+
     public class Car
     {
         public int Id { get; set; }
@@ -34,5 +41,6 @@ namespace BerAuto.DataContext.Entities
         public CarCategory CarCategory { get; set; }
         public Engine Engine { get; set; }
         public double Price { get; set; }
+        public Status Status { get; set; }
     }
 }
