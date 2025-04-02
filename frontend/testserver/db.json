@@ -22,9 +22,14 @@
       "id": "fe30",
       "email": "duba@gmail.com",
       "password": "12345"
+    },
+    {
+      "id": "b0fe",
+      "email": "bence@gmail.com",
+      "password": "123"
     }
-  ], 
-  "cars":{
+  ],
+  "cars": {
     "1": {
       "id": "1",
       "brand": "BMW",
@@ -34,7 +39,7 @@
       "mileage": 20000,
       "color": "Black",
       "description": "A luxury SUV with advanced features.",
-      "image_url": "/images/bmw_x5.jpg"
+      "image_url": "testserver/carPictures/bmw.png"
     },
     "2": {
       "id": "2",
@@ -45,7 +50,51 @@
       "mileage": 30000,
       "color": "White",
       "description": "A premium sedan with a sleek design.",
-      "image_url": "/images/audi_a6.jpg"
+      "image_url": "testserver/carPictures/audi.png"
+    },
+    "3": {
+      "id": "3",
+      "brand": "Audi",
+      "model": "A6",
+      "year": 2019,
+      "price": 45000,
+      "mileage": 30000,
+      "color": "White",
+      "description": "A premium sedan with a sleek design.",
+      "image_url": "testserver/carPictures/audi.png"
+    },
+    "4": {
+      "id": "4",
+      "brand": "Audi",
+      "model": "A6",
+      "year": 2019,
+      "price": 45000,
+      "mileage": 30000,
+      "color": "White",
+      "description": "A premium sedan with a sleek design.",
+      "image_url": "testserver/carPictures/audi.png"
+    },
+    "5": {
+      "id": "5",
+      "brand": "Audi",
+      "model": "A6",
+      "year": 2019,
+      "price": 45000,
+      "mileage": 30000,
+      "color": "White",
+      "description": "A premium sedan with a sleek design.",
+      "image_url": "testserver/carPictures/audi.png"
+    },
+    "6": {
+      "id": "6",
+      "brand": "Audi",
+      "model": "A6",
+      "year": 2019,
+      "price": 45000,
+      "mileage": 30000,
+      "color": "White",
+      "description": "A premium sedan with a sleek design.",
+      "image_url": "testserver/carPictures/audi.png"
     }
   }
 }
