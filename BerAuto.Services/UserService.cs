@@ -21,6 +21,7 @@ namespace BerAuto.Services
         Task<IList<RoleDto>> GetAllRolesAsync();
 
         Task<UserDto> RegisterUserAsync(UserCreateDto userCreateDto);
+        Task<string> LoginAsync(UserLoginDto userLoginDto);
         Task<UserDto> UpdateProfileAsync(int id,UserUpdateDto userUpdateDto);
         Task<UserDto> UpdateAddressAsync(int id, AddressCreateDto addressCreateDto);
         Task<UserDto> UpdatePhoneAsync(int id, UpdatePhoneDto updatePhoneDto);
@@ -87,6 +88,17 @@ namespace BerAuto.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<UserDto>(user);
+        }
+        public async Task<string> LoginAsync(UserLoginDto userLoginDto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("Invalid credentials.");
+            }
+
+            //return _jwtService.GenerateToken(user);
+            return user.Name;
         }
         public async Task<UserDto> UpdateProfileAsync(int id, UserUpdateDto userUpdateDto)
         {

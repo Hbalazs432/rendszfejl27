@@ -71,6 +71,13 @@ namespace BerAuto.Controllers
             return Ok(res);
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
+        {
+            var token = await _userService.LoginAsync(userLoginDto);
+            return Ok(new { Token = token });
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProfile(int id,UserUpdateDto userUpdateDto)
         {

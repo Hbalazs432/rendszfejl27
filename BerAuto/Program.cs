@@ -2,12 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using BerAuto.DataContext.Context;
 using BerAuto.Services;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts =>
+{
+    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlServer("Server=adatb-mssql.mik.uni-pannon.hu,2019;Database=h10_s4buby;User Id=h10_s4buby;" +

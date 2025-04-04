@@ -29,7 +29,7 @@ namespace BerAuto.Services
             CreateMap<CarCategoryUpdateDto, CarCategory>();
 
             CreateMap<Car, CarDto>().ReverseMap();
-            CreateMap<Car, CarCreateDto>();
+            CreateMap<Car, CarCreateDto>().ReverseMap();
             CreateMap<CarUpdateDto, Car>();
 
             CreateMap<Rent, RentDto>().ReverseMap();

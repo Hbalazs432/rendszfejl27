@@ -15,10 +15,10 @@ namespace BerAuto.Controllers
             _rentService = rentService;
         }
 
-        [HttpPost("create-rent/{userId}")]
-        public async Task<IActionResult> CreateRent(int? userId, [FromBody] RentCreateDto rentCreateDto)
+        [HttpPost("create-rent")]
+        public async Task<IActionResult> CreateRent([FromBody] RentCreateDto rentCreateDto)
         {
-            var res = await _rentService.CreateRentAsync(rentCreateDto, userId);
+            var res = await _rentService.CreateRentAsync(rentCreateDto, rentCreateDto.UserId);
             return Ok(res);
         }
 

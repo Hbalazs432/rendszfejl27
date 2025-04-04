@@ -114,7 +114,7 @@ namespace BerAuto.Controllers
             return Ok();
         }
 
-        [HttpPut("delete-car/{carId}")]
+        [HttpDelete("delete-car/{carId}")]
         public async Task<IActionResult> DeleteCar(int carId)
         {
             var result = await _carService.DeleteCar(carId);

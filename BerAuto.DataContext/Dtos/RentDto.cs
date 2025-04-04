@@ -21,6 +21,7 @@ namespace BerAuto.DataContext.Dtos
 
     public class RentCreateDto
     {
+        public int? UserId { get; set; }
         public int? CarId { get; set; }
         public string Email { get; set; }
         public DateOnly StartDate { get; set; }

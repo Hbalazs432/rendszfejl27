@@ -33,12 +33,12 @@ namespace BerAuto.DataContext.Dtos
         public string Model { get; set; }
         public int YearOfManufacture { get; set; }
         public int Seats { get; set; }
-        public string Transmission { get; set; }
+        public Transmission Transmission { get; set; }
         public int Distance { get; set; }
         public double Consumption { get; set; }
         public double Capacity { get; set; }
         public int CarCategoryId { get; set; }
-        public string Engine { get; set; }
+        public Engine Engine { get; set; }
         public double Price { get; set; }
 
     }
