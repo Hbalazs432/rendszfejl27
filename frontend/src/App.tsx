@@ -7,15 +7,15 @@ import Admin from './Components/Admin';
 import { ToastContainer, toast } from 'react-toastify';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-
+import Datepicker from './Components/DatePicker';
 function App() {
   return (
     <>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Router>
       <Routes>
-        <Route path="/" element={<Registration />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/"  element={<><Datepicker/><Registration/></>} />
+        <Route path="/login" element={<><Datepicker/><Login /></>} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/user" element={<User />} />
       </Routes>

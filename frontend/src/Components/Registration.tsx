@@ -1,18 +1,24 @@
 import React, { useRef, FormEvent, useState } from "react";
 import { PropagateLoader } from "react-spinners";
 import {motion} from 'framer-motion';
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 
 function Registration() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [role, setRole] = useState<string>("user");
+ 
   const [isPending, setIsPending] = useState(false);
   const resetFrom = useRef<HTMLFormElement>(null);
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e: FormEvent<HTMLElement>) => {
-    e.preventDefault();
-    console.log(email, password);
-    const data = { email, password };
+    e.preventDefault();  
+    console.log(email, password, role);
+    const data = { email, password, role};
     setIsPending(true);
     //POST METHOD, ide kell majd az az url amin a backend fut
    fetch("http://localhost:5001/register", {
@@ -31,9 +37,12 @@ function Registration() {
         setEmail("");
         setPassword("");
         console.log("Felhasználó hozzáadva", data);
+        toast.success("Sikeres regisztráció")
+        navigate("/login");
       })
       .catch((error) => {
         console.log("Hiba történt", error);
+        toast.error("Hiba történt a regisztráció során");
       });
    
   };

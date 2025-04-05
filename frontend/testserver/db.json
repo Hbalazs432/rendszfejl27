@@ -11,26 +11,37 @@
         "state": "Ny",
         "zip": "1111"
       },
-      "phone_number": "0000"
+      "phone_number": "0000",
+      "role": "user"
     },
     {
-      "id": "bfd5",
-      "email": "bence@gmail.com",
-      "password": "12345"
+      "id": "513d",
+      "email": "admin@gmail.com",
+      "password": "admin",
+      "name": "",
+      "street": "",
+      "city": "",
+      "postalCode": "",
+      "phone": "",
+      "role": "admin"
     },
     {
-      "id": "fe30",
-      "email": "duba@gmail.com",
-      "password": "12345"
-    },
-    {
-      "id": "b0fe",
-      "email": "bence@gmail.com",
-      "password": "123"
+      "id": "bf5c",
+      "email": "bence22@gmail.com",
+      "password": "Bence",
+      "role": "user",
+      "phone_number": "06707715954",
+      "address": {
+        "country": "qw1231",
+        "street": "12313",
+        "city": "1231",
+        "state": "1313",
+        "zip": "123131"
+      }
     }
   ],
-  "cars": {
-    "1": {
+  "cars": [
+    {
       "id": "1",
       "brand": "BMW",
       "model": "X5",
@@ -41,7 +52,7 @@
       "description": "A luxury SUV with advanced features.",
       "image_url": "testserver/carPictures/bmw.png"
     },
-    "2": {
+    {
       "id": "2",
       "brand": "Audi",
       "model": "A6",
@@ -52,7 +63,7 @@
       "description": "A premium sedan with a sleek design.",
       "image_url": "testserver/carPictures/audi.png"
     },
-    "3": {
+    {
       "id": "3",
       "brand": "Audi",
       "model": "A6",
@@ -63,7 +74,7 @@
       "description": "A premium sedan with a sleek design.",
       "image_url": "testserver/carPictures/audi.png"
     },
-    "4": {
+    {
       "id": "4",
       "brand": "Audi",
       "model": "A6",
@@ -74,7 +85,7 @@
       "description": "A premium sedan with a sleek design.",
       "image_url": "testserver/carPictures/audi.png"
     },
-    "5": {
+    {
       "id": "5",
       "brand": "Audi",
       "model": "A6",
@@ -85,7 +96,7 @@
       "description": "A premium sedan with a sleek design.",
       "image_url": "testserver/carPictures/audi.png"
     },
-    "6": {
+    {
       "id": "6",
       "brand": "Audi",
       "model": "A6",
@@ -95,6 +106,17 @@
       "color": "White",
       "description": "A premium sedan with a sleek design.",
       "image_url": "testserver/carPictures/audi.png"
+    },
+    {
+      "id": "5d70",
+      "brand": "audi",
+      "model": "sd2",
+      "year": 2222,
+      "price": 22,
+      "mileage": 22,
+      "color": "xd",
+      "description": "xdxdxd",
+      "image_url": "testserver/carPictures/"
     }
-  }
+  ]
 }

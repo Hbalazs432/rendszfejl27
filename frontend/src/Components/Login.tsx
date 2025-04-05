@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify';
 import {motion} from 'framer-motion'; 
 
+
 function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -14,23 +15,23 @@ function Login() {
     e.preventDefault();
     try{
       //GET METHOD. ez itt egy teszt, majd ki kell cserélni
-      const response = await fetch("http://localhost:5001/register?email=" + email);
-      if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
+      const response = await fetch(`http://localhost:5001/register?email=${email}&password=${password}`)
+        const data = await response.json();
       console.log(data);
-      if (data.length == 0){
-        toast.error("Nem található ilyen felhasználó!");
-        return;
-      }
+
       const user = data[0];
-      if(user.password !== password){
-        toast.error("Hibás email cím vagy jelszó!");
-        return;
+      if(user.role === "admin"){
+        navigate('/admin', {state: {user}});
+        toast.success("Sikeres bejelentkezés!");
       }
-      toast.success("Sikeres bejelentkezés!");
-      navigate('/user', {state: {user: data[0]}});
+     
+     if(user.role === "user" && user.email === email && user.password === password){
+        toast.success("Sikeres bejelentkezés!");
+        navigate('/user', {state: {user}});
+      }
     }catch(error){
       console.log("Hiba történt", error);
+      toast.error("Hibás email cím vagy jelszó!");
     }
 }
 
