@@ -8,10 +8,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Datepicker from './Components/DatePicker';
+import {SkeletonTheme} from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+
 function App() {
   return (
     <>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <SkeletonTheme baseColor='#313131' highlightColor='#525252'>
     <Router>
       <Routes>
         <Route path="/"  element={<><Datepicker/><Registration/></>} />
@@ -21,6 +26,7 @@ function App() {
       </Routes>
     </Router>
       <ToastContainer position='bottom-center' theme='dark'/>
+      </SkeletonTheme>
     </LocalizationProvider>
     </>
   )

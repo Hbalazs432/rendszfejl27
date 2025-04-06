@@ -6,60 +6,21 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import  TextField  from "@mui/material/TextField";
+import { toast } from "react-toastify";
+import {container, itemTo, style} from '../styles/styles'
+import {Car} from '../interfaces/interfaces'
 
-
-
-interface Car {
-  id: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage: number;
-  color: string;
-  description: string;
-  image_url?: string;
-}
-
-const container = {
-    hidden: { opacity: 1, scale: 0 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2,
-        duration: 1,
-      },
-    },
-  };
-
-  const itemTo = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
-  };
-
-  const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 600,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
 
 function Admin() {
 
+
   const [open, setOpen] = useState(false);
+  const [openCarModal, setopenCarModal] = useState(false)
+  const [selectedId, setselectedId] = useState<string | null>(null);
   const handleOpen = () =>setOpen(true);
   const handleClose = () => setOpen(false);
   const [cars, setCars] = useState<Car[]>([]);
-  const [formData, setFormData] = useState<Car>({
+  const initialCarState: Car = {
     id: "",
     brand: "",
     model: "",
@@ -69,7 +30,8 @@ function Admin() {
     color: "",
     description: "",
     image_url: "",
-  });
+  };
+  const [formData, setFormData] = useState<Car>(initialCarState);
 
 
  useEffect(() => {
@@ -124,20 +86,83 @@ function Admin() {
     })
     const newCar = await response.json();
     setCars((prevCars) => [...prevCars, newCar])
-
-
+    setFormData(initialCarState)
+    toast.success("Megtörtént a hozzáadás")
+    
   }catch (error) {
     console.log("Hiba történt", error);
+    toast.error("Hiba a művelet során")
   }
 }
 
+const handleDeleteModal = (id: string) => {
+  setopenCarModal(true)
+  setselectedId(id)
+}
+
+const handleCloseModal = () => {
+  setopenCarModal(false)
+  setselectedId(null)
+}
+
+
+const handleRemove = async () => {
+  if(! selectedId) return;
+   const newCarList = cars.filter((item) => item.id !== selectedId)
+
+      try{
+        const response = await fetch(`http://localhost:5001/cars/${selectedId}`,{
+          method: "DELETE",
+          headers: {"Content-Type": "application/json"}
+        })
+        if (response.ok) {
+          console.log(`Törölve lett ez az idjű autó: ${selectedId}.`);
+          setCars(newCarList);
+        } else {
+          console.log("Hiba történt a törlés közben.");
+        }
+      }catch(error){
+        console.log(error);
+      }
+      setopenCarModal(false);
+      setselectedId(null);
+  }
+
+
   return (
     <div>
+      <Modal
+        open={openCarModal}
+        onClose={handleCloseModal}
+        aria-labelledby="delete-confirmation-modal"
+        aria-describedby="delete-confirmation-description"
+        className="border-2 border-gray-500 rounded-lg"
+      >
+        <Box sx={{ ...style, width: 400 }} >
+          <h1 className="text-center font-bold text-2xl">
+            Biztosan törölni akarod ezt az autót?
+          </h1>
+          <Box className="flex justify-center mt-5 ">
+          <button 
+            onClick={handleRemove}
+            className="p-2 m-5  text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600">
+              Igen
+            </button>
+            <button onClick={handleCloseModal}
+              className="p-2 m-5 text-bold font-medium text-center text-white bg-red-500 rounded-lg hover:bg-red-600">
+              Mégse
+            </button>
+          </Box>
+        </Box>
+      </Modal>
+    
+
+
       <div className="text-center font-bold text-3xl text-white m-5 justify-center items-center flex flex-col">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1, transition: { duration: 0.5 } }}
-          className="bg-blue-500 p-3  rounded-lg w-fit mx-auto "
+          className="bg-blue-500 p-3  rounded-lg w-fit mx-auto shadow-light"
         >
           Hello Admin
         </motion.div>
@@ -186,7 +211,7 @@ function Admin() {
         variants={container}
         initial="hidden"
         animate="visible"
-        viewport={{ once: false }}
+
       >
         {cars.map((car, index) => (
           <motion.li
@@ -218,8 +243,8 @@ function Admin() {
                   </p>
                 </div>
                 <div className="flex gap-5">
-                  <button className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600">Módosítás</button>
-                  <button className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800">Törlés</button>
+                  <button  className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">Módosítás</button>
+                  <button onClick={() => handleDeleteModal(car.id)} className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800">Törlés</button>
                 </div>
               </div>
             </div>

@@ -5,36 +5,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
+import {container, itemTo} from '../styles/styles'
+import {Car, User as UserInterface} from '../interfaces/interfaces'
 
 
-interface User {
-  id: string;
-  email: string;
-  phone_number: number;
-  address: {
-    country: string;
-    street: string;
-    city: string;
-    state: string;
-    zip: number;
-  };
-}
 
-interface Car {
-  id: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage: number;
-  color: string;
-  description: string;
-  image_url: string;
-}
 
 function User() {
   const { state } = useLocation();
-  const [user, setUser] = useState<User>(state?.user);
+  const [user, setUser] = useState<UserInterface>(state?.user);
   const [editing, setEditing] = useState(false);
   const [tempData, setTempData] = useState({ ...user });
   const [cars, setCars] = useState<Car[]>([]);
@@ -43,26 +22,8 @@ function User() {
   //kinda felesleges
 
 
-  const container = {
-    hidden: { opacity: 1, scale: 0 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2,
-        duration: 1,
-      },
-    },
-  };
 
-  const itemTo = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-    },
-  };
+
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -193,7 +154,11 @@ function User() {
               className="bg-slate-400 outline-none p-1"
             />
           ) : (
-            <div>phone number: {user.phone_number}</div>
+            <>
+            <div>
+            phone number: {user.phone_number}
+               </div>
+               </>
           )}
           {editing ? (
             <input
