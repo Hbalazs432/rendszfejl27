@@ -1,11 +1,13 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
 import {container, itemTo} from '../styles/styles'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 import {Car, User as UserInterface} from '../interfaces/interfaces'
 
 
@@ -19,8 +21,7 @@ function User() {
   const [cars, setCars] = useState<Car[]>([]);
   const [startDate, setstartDate] = useState<Dayjs | null>(null);
   const [endDate, setendDate] = useState<Dayjs | null>(null);
-  //kinda felesleges
-
+  const navigate = useNavigate()
 
 
 
@@ -109,9 +110,18 @@ function User() {
     }
   };
 
+  const  handleLogout = () =>{
+    navigate('/')
+    localStorage.clear()
+    toast.success("Sikeres kiejelentkezés")
+  }
+
   return (
     <>
-      <div className="text-center font-bold text-3xl text-white m-5 ">
+      <div className="flex flex-row text-center font-bold text-3xl text-white m-5 ">
+        <button className="text-sm bg-blue-500 rounded-lg  p-5" onClick={handleLogout}>
+        <FontAwesomeIcon icon={faArrowRightFromBracket} />
+        </button>
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1, transition: { duration: 0.5 } }}
@@ -272,7 +282,7 @@ function User() {
                     {car.description}
                   </p>
                 </div>
-                <button className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 ">
+                <button className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-all hover:scale-105">
                   Lefoglalás
                 </button>
               </div>

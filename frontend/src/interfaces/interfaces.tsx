@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Car {
   id: string;
   brand: string;
@@ -21,4 +23,9 @@ export interface User {
     state: string;
     zip: number;
   };
+}
+
+
+export interface ProtectedRoute {
+  children: ReactNode
 }

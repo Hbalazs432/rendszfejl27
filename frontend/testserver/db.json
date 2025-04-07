@@ -38,6 +38,12 @@
         "state": "1313",
         "zip": "123131"
       }
+    },
+    {
+      "id": "1a12",
+      "email": "bence@gmail.com",
+      "password": "123",
+      "role": "user"
     }
   ],
   "cars": [
@@ -94,6 +100,17 @@
       "mileage": 132123,
       "color": "red",
       "description": "ewqeqw",
+      "image_url": "testserver/carPictures/"
+    },
+    {
+      "id": "9541",
+      "brand": "audi",
+      "model": "xr5",
+      "year": 2026,
+      "price": 42000,
+      "mileage": 50000,
+      "color": "red",
+      "description": "impressive car",
       "image_url": "testserver/carPictures/"
     }
   ]

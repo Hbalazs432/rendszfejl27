@@ -145,11 +145,11 @@ const handleRemove = async () => {
           <Box className="flex justify-center mt-5 ">
           <button 
             onClick={handleRemove}
-            className="p-2 m-5  text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600">
+            className="p-2 m-5  text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600 transition-all hover:scale-105">
               Igen
             </button>
             <button onClick={handleCloseModal}
-              className="p-2 m-5 text-bold font-medium text-center text-white bg-red-500 rounded-lg hover:bg-red-600">
+              className="p-2 m-5 text-bold font-medium text-center text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all hover:scale-105">
               Mégse
             </button>
           </Box>
@@ -166,7 +166,7 @@ const handleRemove = async () => {
         >
           Hello Admin
         </motion.div>
-          <button type="submit" onClick={handleOpen}className=" w-96 m-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center">Autó hozzáadása</button>
+          <button type="submit" onClick={handleOpen}className=" w-96 m-10 text-white bg-blue-700 hover:bg-blue-800 transition-all hover:scale-105 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center">Autó hozzáadása</button>
       </div>
        <Modal
         aria-labelledby="transition-modal-title"
@@ -199,7 +199,7 @@ const handleRemove = async () => {
             </label>
             </div>
 
-          <button type="submit" className=" m-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center">Feltöltés</button>
+          <button type="submit" className=" m-10 text-white bg-blue-700 hover:bg-blue-800 transition-all hover:scale-105 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center">Feltöltés</button>
             </form>
           </Box>
         </Fade>
@@ -243,8 +243,8 @@ const handleRemove = async () => {
                   </p>
                 </div>
                 <div className="flex gap-5">
-                  <button  className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">Módosítás</button>
-                  <button onClick={() => handleDeleteModal(car.id)} className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800">Törlés</button>
+                  <button  className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all hover:scale-105">Módosítás</button>
+                  <button onClick={() => handleDeleteModal(car.id)} className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 transition-all hover:scale-105">Törlés</button>
                 </div>
               </div>
             </div>

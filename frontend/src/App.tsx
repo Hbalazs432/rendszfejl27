@@ -10,6 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Datepicker from './Components/DatePicker';
 import {SkeletonTheme} from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import ProtectedRoute  from './Components/ProtectedRoute';
 
 
 function App() {
@@ -21,8 +22,8 @@ function App() {
       <Routes>
         <Route path="/"  element={<><Datepicker/><Registration/></>} />
         <Route path="/login" element={<><Datepicker/><Login /></>} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/user" element={<User />} />
+        <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
+        <Route path="/user" element={<ProtectedRoute><User/></ProtectedRoute>} />
       </Routes>
     </Router>
       <ToastContainer position='bottom-center' theme='dark'/>
