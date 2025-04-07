@@ -1,12 +1,18 @@
-import React from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
-import { ProtectedRoute as PR } from '../interfaces/interfaces'
+import {Navigate } from 'react-router-dom'
+import {FC,  ReactNode } from 'react'
 
 
-const ProtectedRoute = ({children}: PR) => {
+export interface ProtectedRouteProp {
+    children: ReactNode
+  }
+
+const ProtectedRoute: FC<ProtectedRouteProp>  = ({children}) => {
     const user = localStorage.getItem("user")
-    if(!user) 
-    return <Navigate to='/login' replace/> 
+    console.log(user)
+    if(!user)
+    {
+        return <Navigate to='/login' replace/> 
+    } 
     return <>{children}</> 
 }
 

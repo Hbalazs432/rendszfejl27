@@ -25,7 +25,3 @@ export interface User {
   };
 }
 
-
-export interface ProtectedRoute {
-  children: ReactNode
-}

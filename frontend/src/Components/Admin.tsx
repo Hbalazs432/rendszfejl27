@@ -1,5 +1,5 @@
-import React, {FormEvent} from "react";
-import { useEffect, useState } from "react";
+import React from "react";
+import {FormEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
@@ -9,7 +9,9 @@ import  TextField  from "@mui/material/TextField";
 import { toast } from "react-toastify";
 import {container, itemTo, style} from '../styles/styles'
 import {Car} from '../interfaces/interfaces'
-
+import { useNavigate } from "react-router-dom";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 
 function Admin() {
 
@@ -32,6 +34,7 @@ function Admin() {
     image_url: "",
   };
   const [formData, setFormData] = useState<Car>(initialCarState);
+  const navigate = useNavigate()
 
 
  useEffect(() => {
@@ -129,6 +132,13 @@ const handleRemove = async () => {
   }
 
 
+    const  handleLogout = () =>{
+      navigate('/')
+      localStorage.clear()
+      toast.success("Sikeres kiejelentkezés")
+    }
+
+
   return (
     <div>
       <Modal
@@ -158,7 +168,10 @@ const handleRemove = async () => {
     
 
 
-      <div className="text-center font-bold text-3xl text-white m-5 justify-center items-center flex flex-col">
+      <div className="text-center font-bold text-3xl text-white m-5 justify-center items-center flex flex-row">   
+      <button className="text-sm bg-blue-500 rounded-lg  p-5" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faArrowRightFromBracket} />
+          </button>           
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1, transition: { duration: 0.5 } }}
@@ -166,7 +179,9 @@ const handleRemove = async () => {
         >
           Hello Admin
         </motion.div>
-          <button type="submit" onClick={handleOpen}className=" w-96 m-10 text-white bg-blue-700 hover:bg-blue-800 transition-all hover:scale-105 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center">Autó hozzáadása</button>
+      </div>
+      <div className="flex justify-center text-center">
+        <button type="submit" onClick={handleOpen}className=" w-96 m-10 text-white bg-blue-700 hover:bg-blue-800 transition-all hover:scale-105 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center">Autó hozzáadása</button>
       </div>
        <Modal
         aria-labelledby="transition-modal-title"

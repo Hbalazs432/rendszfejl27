@@ -136,16 +136,19 @@ function User() {
           initial={{ scale: 0 }}
           animate={{ scale: 1, transition: { duration: 1.5 } }}
         >
-          <DatePicker
-            label="Igénylés idejének kezdete"
-            value={startDate}
-            onChange={handleDateChange}
-          />
-          <DatePicker
-            label="Igénylés idejének vége"
-            value={endDate}
-            onChange={handleDateChange}
-          />
+        <div className=" bg-blue-500 overflow-y-scroll h-48 w-96   rounded-lg">
+          <h1 className="text-center my-2">Kölcsönzések</h1>
+          {cars.map((car, index) => (
+          <div  key={index} className="bg-white border-2 rounded-lg text-black my-5 mx-3 ">
+            <h1 className="font-bold ">{car.brand} {car.model} {car.year}</h1>
+            <div>Szín: {car.color}</div>
+            <div>Ár: {car.price}/nap</div>
+            <div>Km: {car.mileage}</div>
+            <div>Leírás: {car.description}</div>
+            <div>status</div>
+          </div>   
+          ))}
+        </div>
         </motion.div>
         <motion.div
           initial={{ scale: 0 }}

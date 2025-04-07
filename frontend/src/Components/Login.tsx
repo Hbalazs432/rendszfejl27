@@ -21,14 +21,14 @@ function Login() {
 
       const user = data[0];
       if(user.role === "admin"){
+        localStorage.setItem("user", JSON.stringify(user))
         navigate('/admin', {state: {user}});
-        localStorage.setItem("Mentett admin", JSON.stringify(user))
         toast.success("Sikeres bejelentkezés!");
       }
      
      if(user.role === "user" && user.email === email && user.password === password){
+       localStorage.setItem("user", JSON.stringify(user))
         toast.success("Sikeres bejelentkezés!");
-        localStorage.setItem("Mentett user", JSON.stringify(user))
         navigate('/user', {state: {user}});
       }
     }catch(error){
