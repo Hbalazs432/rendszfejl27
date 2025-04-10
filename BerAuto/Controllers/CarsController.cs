@@ -55,9 +55,19 @@ namespace BerAuto.Controllers
         }
         [HttpPut("update-car/{id}")]
         public async Task<IActionResult> UpdateCar(int id, [FromBody] CarUpdateDto carUpdateDto)
-        { 
-           var res = await _carService.UpdateCarAsync(id, carUpdateDto);
-            return Ok(res);
+        {
+            try
+            {
+                var result = await _carService.UpdateCarAsync(id, carUpdateDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+
+                return BadRequest(exc.Message);
+            }
+          
+           
         }
         [HttpPost("create-car-category")]
         public async Task<IActionResult> CreateCarCategory([FromBody] CarCategoryCreateDto carCategoryDto)
