@@ -26,32 +26,56 @@ namespace BerAuto.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var result = await _carService.GetAllCarsAsync();
-
-            return Ok(result);
+            try
+            {
+                var result = await _carService.GetAllCarsAsync();
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpGet("list-available-cars")]
         public async Task<IActionResult> ListAvailableCars()
         {
-            var result = await _carService.GetAvailableCarsAsync();
-
-            return Ok(result);
+            try
+            {
+                var result = await _carService.GetAvailableCarsAsync();
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpGet("{idx}")]
         public async Task<IActionResult> GetCar(int idx)
         {
-            var result = await _carService.GetCarByIdAsync(idx);
-            if (result is null) return BadRequest("No such car");
-
-            return Ok(result);
+            try
+            {
+                var result = await _carService.GetCarByIdAsync(idx);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
         [HttpPost("create-car")]
         public async Task<IActionResult> CreateCar([FromBody] CarCreateDto carCreateDto)
         {
-            var car= await _carService.CreateCarAsync(carCreateDto);
-            return Ok();
+            try
+            {
+                var car = await _carService.CreateCarAsync(carCreateDto);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                return BadRequest($"Creation failed. Error: {exc.Message}");
+            }
         }
         [HttpPut("update-car/{id}")]
         public async Task<IActionResult> UpdateCar(int id, [FromBody] CarUpdateDto carUpdateDto)
@@ -66,73 +90,105 @@ namespace BerAuto.Controllers
 
                 return BadRequest(exc.Message);
             }
-          
-           
         }
         [HttpPost("create-car-category")]
         public async Task<IActionResult> CreateCarCategory([FromBody] CarCategoryCreateDto carCategoryDto)
         {
-            var category = await _carService.CreateCarCategoryAsync(carCategoryDto);
-            return Ok();
+            try
+            {
+                var category = await _carService.CreateCarCategoryAsync(carCategoryDto);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                return BadRequest($"Creation failed. Error: {exc.Message}");
+            }
         }
 
         [HttpGet("categories")]
         public async Task<IActionResult> GetAllCarCategories()
         {
-            var categories = await _carService.GetAllCarCategoriesAsync();
-            return Ok(categories);
+            try
+            {
+                var categories = await _carService.GetAllCarCategoriesAsync();
+                return Ok(categories);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPut("update-car-categories/{categoryId}")]
         public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CarCategoryUpdateDto categoryDto)
         {
-            var result = await _carService.UpdateCarCategoryAsync(categoryId, categoryDto);
-            return Ok(result);
+            try
+            {
+                var result = await _carService.UpdateCarCategoryAsync(categoryId, categoryDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
 
         [HttpPut("change-status-rented/{carId}")]
         public async Task<IActionResult> ChangeStatusRented(int carId)
         {
-            var result = await _carService.ChangeStatusRented(carId);
-            if (!result)
+            try
             {
-                throw new Exception("Couldn't change the car's status");
+                var result = await _carService.ChangeStatusRented(carId);
+                return Ok();
             }
-            return Ok();
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPut("change-status-withcustomer/{carId}")]
         public async Task<IActionResult> ChangeStatusWithCustomer(int carId)
         {
-            var result = await _carService.ChangeStatusWithCustomer(carId);
-            if (!result)
+            try
             {
-                throw new Exception("Couldn't change the car's status");
+                var result = await _carService.ChangeStatusWithCustomer(carId);
+                return Ok();
             }
-            return Ok();
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPut("change-status-available/{carId}")]
         public async Task<IActionResult> ChangeStatusAvailable(int carId)
         {
-            var result = await _carService.ChangeStatusAvailable(carId);
-            if (!result)
+            try
             {
-                throw new Exception("Couldn't change the car's status");
+                var result = await _carService.ChangeStatusAvailable(carId);
+                return Ok();
             }
-            return Ok();
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpDelete("delete-car/{carId}")]
         public async Task<IActionResult> DeleteCar(int carId)
         {
-            var result = await _carService.DeleteCar(carId);
-            if (!result)
+            try
             {
-                throw new Exception("Couldn't delete the car");
+                var result = await _carService.DeleteCar(carId);
+                return Ok();
             }
-            return Ok();
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+            
         }
     }
 }

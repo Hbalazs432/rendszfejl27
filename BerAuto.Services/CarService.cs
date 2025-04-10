@@ -53,6 +53,10 @@ namespace BerAuto.Services
         public async Task<CarDto> GetCarByIdAsync(int idx)
         {
             var car = await _context.Cars.Include(c => c.CarCategory).FirstOrDefaultAsync(c => c.Id == idx);
+            if (car is null) 
+            { 
+                throw new KeyNotFoundException($"No car found with id: {idx}");
+            } 
             return _mapper.Map<CarDto>(car);
         }
         public async Task<CarDto> CreateCarAsync(CarCreateDto car)
@@ -68,7 +72,7 @@ namespace BerAuto.Services
             var car = await _context.Cars.FirstOrDefaultAsync(c=>c.Id==id);
             if (car == null)
             {
-                throw new KeyNotFoundException("Car not found.");
+                throw new KeyNotFoundException($"No car found with id: {id}");
             }
             _mapper.Map(carDto,car);
             _context.Cars.Update(car);
@@ -95,7 +99,7 @@ namespace BerAuto.Services
             var category = await _context.CarCategories.FirstOrDefaultAsync(c => c.Id == categoryId);
             if (category == null) 
             {
-                throw new KeyNotFoundException("Category not found.");
+                throw new KeyNotFoundException($"No category found with id: {categoryId}");
             }
             _mapper.Map(categoryDto, category);
             _context.CarCategories.Update(category);
@@ -108,7 +112,7 @@ namespace BerAuto.Services
             var car = await _context.Cars.FirstOrDefaultAsync(o => o.Id == carId && o.Status == Status.Available);
             if (car is null)
             {
-                throw new Exception("Car not found");
+                throw new KeyNotFoundException($"No car found with id: {carId}");
             }
             car.Status = Status.Rented;
             _context.Cars.Update(car);
@@ -121,7 +125,7 @@ namespace BerAuto.Services
             var car = await _context.Cars.FirstOrDefaultAsync(o => o.Id == carId && o.Status == Status.Rented);
             if (car is null)
             {
-                throw new Exception("Car not found");
+                throw new KeyNotFoundException($"No car found with id: {carId}");
             }
             car.Status = Status.WithCustomer;
             _context.Cars.Update(car);
@@ -134,7 +138,7 @@ namespace BerAuto.Services
             var car = await _context.Cars.FirstOrDefaultAsync(o => o.Id == carId && o.Status == Status.WithCustomer);
             if (car is null)
             {
-                throw new Exception("Car not found");
+                throw new KeyNotFoundException($"No car found with id: {carId}");
             }
             car.Status = Status.Available;
             _context.Cars.Update(car);
@@ -147,7 +151,7 @@ namespace BerAuto.Services
             var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == carId && c.Status == Status.Available);
             if (car == null)
             {
-                throw new Exception("Car not found");
+                throw new KeyNotFoundException($"No car found with id: {carId}");
             }
             _context.Cars.Remove(car);
             var result = await _context.SaveChangesAsync();
