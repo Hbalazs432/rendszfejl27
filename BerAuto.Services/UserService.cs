@@ -45,12 +45,12 @@ namespace BerAuto.Services
             await _context.SaveChangesAsync();
             return _mapper.Map<RoleDto>(role);
         }
-        public async Task<RoleDto> UpdateRoleAsync(int id, RoleUpdateDto roleUpdateDto) 
+        public async Task<RoleDto> UpdateRoleAsync(int roleId, RoleUpdateDto roleUpdateDto) 
         {
-            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == id);
-            if (role == null)
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+            if (role is null)
             {
-                throw new KeyNotFoundException("Role not found!");
+                throw new KeyNotFoundException($"No role found with id: {roleId}");
             }
             _mapper.Map(roleUpdateDto, role);
             _context.Roles.Update(role);
@@ -103,9 +103,9 @@ namespace BerAuto.Services
         public async Task<UserDto> UpdateProfileAsync(int id, UserUpdateDto userUpdateDto)
         {
             var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id==id);
-            if (user == null)
+            if (user is null)
             {
-                throw new KeyNotFoundException("User not found!");
+                throw new KeyNotFoundException($"No user found with id: {id}");
             }
             _mapper.Map(userUpdateDto, user);
             if (userUpdateDto.RoleIds != null && userUpdateDto.RoleIds.Any())
@@ -130,9 +130,9 @@ namespace BerAuto.Services
         public async Task<UserDto> UpdateAddressAsync(int id, AddressCreateDto addressCreateDto)
         {
             var user= await _context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id==id);
-            if (user == null)
+            if (user is null)
             {
-                throw new KeyNotFoundException("User not found.");
+                throw new KeyNotFoundException($"No user found with id: {id}");
             }
             user.Address= _mapper.Map<Address>(addressCreateDto);
             _context.Users.Update(user);    
@@ -144,9 +144,9 @@ namespace BerAuto.Services
         public async Task<UserDto> UpdatePhoneAsync(int id, UpdatePhoneDto updatePhoneDto)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (user == null)
+            if (user is null)
             {
-                throw new KeyNotFoundException("User not found.");
+                throw new KeyNotFoundException($"No user found with id: {id}");
             }
             user.Phone = updatePhoneDto.Phone;
             _context.Users.Update(user);
@@ -160,7 +160,7 @@ namespace BerAuto.Services
             var user= await _context.Users.Include(u => u.Address).Include(u=>u.Roles).FirstOrDefaultAsync(u => u.Id==id);
             if (user == null)
             {
-                throw new KeyNotFoundException("User not found!");
+                throw new KeyNotFoundException($"No user found with id: {id}");
             }
             return _mapper.Map<UserDto>(user);
         }

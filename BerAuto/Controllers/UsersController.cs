@@ -26,16 +26,30 @@ namespace BerAuto.Controllers
 
         [HttpPost("create-role")]
         public async Task<IActionResult> CreateRole(RoleCreateDto roleCreateDto)
-        { 
-            var res=await _userService.CreateRoleAsync(roleCreateDto);
-            return Ok(res);
+        {
+            try
+            {
+                var resesult = await _userService.CreateRoleAsync(roleCreateDto);
+                return Ok(resesult);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }   
         }
 
         [HttpPut("update-role-{id}")]
         public async Task<IActionResult> UpdateRole(int id, RoleUpdateDto roleUpdateDto)
-        { 
-            var res=await _userService.UpdateRoleAsync(id, roleUpdateDto);
-            return Ok(res);
+        {
+            try
+            {
+                var result = await _userService.UpdateRoleAsync(id, roleUpdateDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpDelete("delete-role-{id}")]
@@ -43,13 +57,13 @@ namespace BerAuto.Controllers
         {
             try
             {
-                var res = await _userService.DeleteRoleAsync(id);
+                var result = await _userService.DeleteRoleAsync(id);
 
-                if (res)
+                if (result)
                     return NoContent();
 
             }
-            catch(Exception ex)
+            catch(Exception exc)
             {
                 return NotFound();
             }
@@ -59,16 +73,30 @@ namespace BerAuto.Controllers
 
         [HttpGet("roles")]
         public async Task<IActionResult> ListRoles()
-        { 
-            var res=await _userService.GetAllRolesAsync();
-            return Ok(res);
+        {
+            try
+            {
+                var result = await _userService.GetAllRolesAsync();
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserCreateDto userCreateDto)
         {
-            var res = await _userService.RegisterUserAsync(userCreateDto);
-            return Ok(res);
+            try
+            {
+                var result = await _userService.RegisterUserAsync(userCreateDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPost("login")]
@@ -81,28 +109,56 @@ namespace BerAuto.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProfile(int id,UserUpdateDto userUpdateDto)
         {
-            var res = await _userService.UpdateProfileAsync(id,userUpdateDto);
-            return Ok(res);
+            try
+            {
+                var result = await _userService.UpdateProfileAsync(id, userUpdateDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
         [HttpPut("update-address-{id}")]
         public async Task<IActionResult> UpdateAddress(int id, AddressCreateDto addressCreateDto)
         { 
-            var res=await _userService.UpdateAddressAsync(id,addressCreateDto);
-            return Ok(res);
+            try
+            {
+                var result = await _userService.UpdateAddressAsync(id, addressCreateDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpPut("update-phone-{id}")]
         public async Task<IActionResult> UpdatePhone(int id, [FromBody] UpdatePhoneDto updatePhoneDto)
         {
-            var res = await _userService.UpdatePhoneAsync(id, updatePhoneDto);
-            return Ok(res);
+            try
+            {
+                var result = await _userService.UpdatePhoneAsync(id, updatePhoneDto);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
 
         [HttpGet("/{id}")]
         public async Task<IActionResult> GetUser(int id)
         { 
-            var res = await _userService.GetUserAsync(id);
-            return Ok(res);
+            try
+            {
+                var result = await _userService.GetUserAsync(id);
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
         }
     }
 }

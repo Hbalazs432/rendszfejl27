@@ -34,7 +34,6 @@ namespace BerAuto.Services
         public async Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
             var rent = _mapper.Map<Rent>(rentCreateDto);
             rent.RentStatus = RentStatus.Pending;
             if (user != null)
@@ -53,7 +52,7 @@ namespace BerAuto.Services
             var rent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == 0);
             if (rent is null)
             {
-                throw new Exception("Rent not found");
+                throw new Exception($"No rent found with id: {rentId} or status is not pending");
             }
             rent.RentStatus = RentStatus.Accepted;
             _context.Rents.Update(rent);
