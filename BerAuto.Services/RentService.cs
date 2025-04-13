@@ -41,6 +41,12 @@ namespace BerAuto.Services
                 rent.UserId = userId;
                 rent.AddressId = user.AddressId;
             }
+            else
+            {
+                if (rentCreateDto.Email != null)
+                    rent.Email = rentCreateDto.Email;
+                else throw new Exception("Can't make a rent without an email address");
+            }
 
             await _context.Rents.AddAsync(rent);
             await _context.SaveChangesAsync();

@@ -1,12 +1,15 @@
 ﻿using BerAuto.DataContext.Dtos;
 using BerAuto.DataContext.Entities;
 using BerAuto.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BerAuto.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RentsController : ControllerBase
     {
         private readonly IRentService _rentService;
@@ -16,12 +19,13 @@ namespace BerAuto.Controllers
             _rentService = rentService;
         }
 
-        [HttpPost("create-rent")]
+        [HttpPost]
         public async Task<IActionResult> CreateRent([FromBody] RentCreateDto rentCreateDto)
         {
             try
             {
-                var res = await _rentService.CreateRentAsync(rentCreateDto, rentCreateDto.UserId);
+                var userId = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
+                var res = await _rentService.CreateRentAsync(rentCreateDto, userId);
                 return Ok(res);
             }
             catch (Exception exc)
@@ -30,7 +34,24 @@ namespace BerAuto.Controllers
             }  
         }
 
+        [HttpPost("anonym")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CreateRentAnonymus([FromBody] RentCreateDto rentCreateDto)
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
+                var res = await _rentService.CreateRentAsync(rentCreateDto, null);
+                return Ok(res);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
         [HttpPut("accept-rent/{orderId}")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> Accept(int orderId)
         {
             try
@@ -44,11 +65,13 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpGet("previous-rents/{userId}")]
-        public async Task<IActionResult> ListPreviousRents(int userId)
+        [HttpGet("previous-rents")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> ListPreviousRents()
         {
             try
             {
+                var userId = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
                 var result = await _rentService.GetPreviousRents(userId);
                 return Ok(result);
             }
@@ -60,6 +83,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("accepted-rents")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> ListAcceptedRents()
         {
             try
@@ -74,6 +98,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("finished-rents")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> ListFinishedRents()
         {
             try
@@ -88,6 +113,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("pending-rents")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> ListPendingRents()
         {
             try

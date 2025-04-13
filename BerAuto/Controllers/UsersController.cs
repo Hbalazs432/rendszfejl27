@@ -9,11 +9,14 @@ using BerAuto.DataContext.Context;
 using BerAuto.DataContext.Entities;
 using BerAuto.Services;
 using BerAuto.DataContext.Dtos;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BerAuto.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -25,6 +28,7 @@ namespace BerAuto.Controllers
 
 
         [HttpPost("create-role")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRole(RoleCreateDto roleCreateDto)
         {
             try
@@ -39,6 +43,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpPut("update-role-{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateRole(int id, RoleUpdateDto roleUpdateDto)
         {
             try
@@ -53,25 +58,24 @@ namespace BerAuto.Controllers
         }
 
         [HttpDelete("delete-role-{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             try
             {
                 var result = await _userService.DeleteRoleAsync(id);
 
-                if (result)
-                    return NoContent();
+                return Ok();
 
             }
             catch(Exception exc)
             {
-                return NotFound();
+                return BadRequest(exc.Message);
             }
-
-            return NotFound();
         }
 
         [HttpGet("roles")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ListRoles()
         {
             try
@@ -86,6 +90,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(UserCreateDto userCreateDto)
         {
             try
@@ -100,17 +105,26 @@ namespace BerAuto.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
-        {
-            var token = await _userService.LoginAsync(userLoginDto);
-            return Ok(new { Token = token });
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProfile(int id,UserUpdateDto userUpdateDto)
         {
             try
             {
+                var token = await _userService.LoginAsync(userLoginDto);
+                return Ok(new { Token = token });
+            }catch(Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+            
+        }
+
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile(UserUpdateDto userUpdateDto)
+        {
+            try
+            {
+                var id = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
                 var result = await _userService.UpdateProfileAsync(id, userUpdateDto);
                 return Ok(result);
             }
@@ -119,11 +133,12 @@ namespace BerAuto.Controllers
                 return BadRequest(exc.Message);
             }
         }
-        [HttpPut("update-address-{id}")]
-        public async Task<IActionResult> UpdateAddress(int id, AddressCreateDto addressCreateDto)
+        [HttpPut("update-address")]
+        public async Task<IActionResult> UpdateAddress(AddressCreateDto addressCreateDto)
         { 
             try
             {
+                var id = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
                 var result = await _userService.UpdateAddressAsync(id, addressCreateDto);
                 return Ok(result);
             }
@@ -133,11 +148,12 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpPut("update-phone-{id}")]
-        public async Task<IActionResult> UpdatePhone(int id, [FromBody] UpdatePhoneDto updatePhoneDto)
+        [HttpPut("update-phone")]
+        public async Task<IActionResult> UpdatePhone([FromBody] UpdatePhoneDto updatePhoneDto)
         {
             try
             {
+                var id = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
                 var result = await _userService.UpdatePhoneAsync(id, updatePhoneDto);
                 return Ok(result);
             }
@@ -147,7 +163,8 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUser(int id)
         { 
             try

@@ -8,6 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Globalization;
 
 
 namespace BerAuto.Services
@@ -77,7 +81,8 @@ namespace BerAuto.Services
 
         public async Task<UserDto> RegisterUserAsync(UserCreateDto userCreateDto)
         {
-            var user = _mapper.Map<User>(userCreateDto);   
+            var user = _mapper.Map<User>(userCreateDto);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.PasswordHash);
             user.Roles=new List<Role>();
             if (!user.Roles.Any())
             {
@@ -91,15 +96,48 @@ namespace BerAuto.Services
         }
         public async Task<string> LoginAsync(UserLoginDto userLoginDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
-            if (user == null)
+            var user = await _context.Users
+                .Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.Email == userLoginDto.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(userLoginDto.Password, user.PasswordHash))
             {
                 throw new UnauthorizedAccessException("Invalid credentials.");
             }
 
-            //return _jwtService.GenerateToken(user);
-            return user.Name;
+            return await GenerateToken(user);
         }
+
+        private async Task<string> GenerateToken(User user)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ME2nCqWZ0JkT0VLQaq3PLgWElyVOpmMd"));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now.AddDays(Convert.ToDouble(5));
+            var id = await GetClaimsIdentity(user);
+            var token = new JwtSecurityToken("https://localhost:7175/", "https://localhost:7175/", id.Claims, expires: expires, signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private async Task<ClaimsIdentity> GetClaimsIdentity(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Sid, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.AuthTime, DateTime.Now.ToString(CultureInfo.InvariantCulture))
+            };
+
+            if(user.Roles != null && user.Roles.Any())
+            {
+                claims.AddRange(user.Roles.Select(role => new Claim("roleIds", Convert.ToString(role.Id))));
+                claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
+            }
+
+            return new ClaimsIdentity(claims, "Token");
+        }
+
         public async Task<UserDto> UpdateProfileAsync(int id, UserUpdateDto userUpdateDto)
         {
             var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id==id);
@@ -170,7 +208,7 @@ namespace BerAuto.Services
             var role = await _context.Roles.FindAsync(id);
 
             if (role == null)
-                throw new Exception("Role not found!");
+                throw new KeyNotFoundException($"No role found with id: {id}");
 
             _context.Roles.Remove(role);
             await _context.SaveChangesAsync();

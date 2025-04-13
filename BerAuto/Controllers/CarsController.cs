@@ -9,11 +9,13 @@ using BerAuto.DataContext.Context;
 using BerAuto.DataContext.Entities;
 using BerAuto.Services;
 using BerAuto.DataContext.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BerAuto.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CarsController : ControllerBase
     {
         private readonly ICarService _carService;
@@ -24,6 +26,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet]
+        //[Authorize(Roles = "Admin")]??
         public async Task<IActionResult> List()
         {
             try
@@ -38,6 +41,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("list-available-cars")]
+        [AllowAnonymous]
         public async Task<IActionResult> ListAvailableCars()
         {
             try
@@ -52,6 +56,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("{idx}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCar(int idx)
         {
             try
@@ -65,6 +70,7 @@ namespace BerAuto.Controllers
             }
         }
         [HttpPost("create-car")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCar([FromBody] CarCreateDto carCreateDto)
         {
             try
@@ -78,6 +84,7 @@ namespace BerAuto.Controllers
             }
         }
         [HttpPut("update-car/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCar(int id, [FromBody] CarUpdateDto carUpdateDto)
         {
             try
@@ -92,6 +99,7 @@ namespace BerAuto.Controllers
             }
         }
         [HttpPost("create-car-category")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCarCategory([FromBody] CarCategoryCreateDto carCategoryDto)
         {
             try
@@ -106,6 +114,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("categories")]
+        //[Authorize(Roles = "Admin")]?
         public async Task<IActionResult> GetAllCarCategories()
         {
             try
@@ -120,6 +129,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpPut("update-car-categories/{categoryId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CarCategoryUpdateDto categoryDto)
         {
             try
@@ -135,6 +145,7 @@ namespace BerAuto.Controllers
 
 
         [HttpPut("change-status-rented/{carId}")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> ChangeStatusRented(int carId)
         {
             try
@@ -149,6 +160,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpPut("change-status-withcustomer/{carId}")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> ChangeStatusWithCustomer(int carId)
         {
             try
@@ -163,6 +175,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpPut("change-status-available/{carId}")]
+        [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> ChangeStatusAvailable(int carId)
         {
             try
@@ -177,6 +190,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpDelete("delete-car/{carId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCar(int carId)
         {
             try
