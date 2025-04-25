@@ -1,105 +1,105 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
-import {container, itemTo} from '../styles/styles'
+// import {containerVariants, itemVariants, style} from '../styles/styles'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
-import {Car, User as UserInterface} from '../interfaces/interfaces'
+import {Car} from '../interfaces/interfaces'
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
-import { style } from "../styles/styles";
-
+import {jwtDecode} from "jwt-decode";
+import Cars from "./Cars";
 
 
 function User() {
-  const { state } = useLocation();
-  const [user, setUser] = useState<UserInterface>(state?.user);
+  const [user, setUser] = useState<any>({
+    name: '',
+    phone: '',
+    address: { street: '', city: '', postalCode: '' }
+  });
   const [editing, setEditing] = useState(false);
-  const [tempData, setTempData] = useState({ ...user });
+  const [tempData, setTempData] = useState(user.address);
   const [cars, setCars] = useState<Car[]>([]);
   const [startDate, setstartDate] = useState<Dayjs | null>(null);
   const [endDate, setendDate] = useState<Dayjs | null>(null);
   const [modal, setModal] = useState(false)
   const [selectedCar, setselectedCar] = useState<Car | null>(null)
-  const navigate = useNavigate()
+  
 
 
 
 
-
+// adatlekérés bejelentkezés után
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      console.log("Nincs token, kérlek jelentkezz be.");
+      return;
+    }
+    try {
+        const decoded = jwtDecode<any>(token);
+        const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+        const loadUserData = async () => {
         const response = await fetch(
-          `http://localhost:5001/register/${user.id}`
+          `https://localhost:7175/api/Users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         const userData = await response.json();
         setUser(userData);
         setTempData(userData);
+        console.log(userData)
+        }
+        loadUserData();
       } catch (error) {
-        console.log("Hiba történt", error);
+        console.error("Hiba történt a felhasználó adatainak betöltésekor:", error);
+      }
+    }, []);
+
+   
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+    
+      // ha address propertyről van szó
+      if (["postalCode", "street", "city"].includes(name)) {
+        setTempData((prev: any) => ({
+          ...prev,
+          address: {
+            ...prev.address,
+            [name]: value,
+          },
+        }));
+      } else {
+        setTempData((prev: any) => ({
+          ...prev,
+          [name]: value,
+        }));
       }
     };
-    loadUserData();
 
-    //autok lekerese
-    const getCars = async () => {
-      const response = await fetch(`http://localhost:5001/cars`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      const cars = await response.json();
-      console.log(cars);
-      const carsArray: Car[] = Object.values(cars);
-      setCars(carsArray);
-    };
-    getCars();
-  }, [user?.id]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (
-      name === "country" ||
-      name === "zip" ||
-      name === "street" ||
-      name === "city" ||
-      name === "state"
-    ) {
-      setTempData((prev) => ({
-        ...prev,
-        address: {
-          ...prev.address,
-          [name]: value,
-        },
-      }));
-    } else {
-      setTempData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleDateChange = (newDate: Dayjs | null) => {
-    setstartDate(newDate);
-    setendDate(newDate);
-    const formatDatum = (date: Dayjs | null): string => {
-      return date ? date.format("YYYY-MMMM-DD") : "";
-    };
-    console.log("start", formatDatum(newDate));
-  };
+  // const handleDateChange = (newDate: Dayjs | null) => {
+  //   setstartDate(newDate);
+  //   setendDate(newDate);
+  //   const formatDatum = (date: Dayjs | null): string => {
+  //     return date ? date.format("YYYY-MMMM-DD") : "";
+  //   };
+  //   console.log("start", formatDatum(newDate));
+  // };
 
   const handleSave = async () => {
     //csere majd a kellőre
     try {
       const response = await fetch(
-        `http://localhost:5001/register/${user.id}`,
+        `https://localhost:7175/api/update-address/${user.id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -118,53 +118,57 @@ function User() {
   };
 
 
-  useEffect(() => {
-    console.log("Selected car updated:", selectedCar);
-  }, [selectedCar]);
+  // useEffect(() => {
+  //   console.log("Selected car updated:", selectedCar);
+  // }, [selectedCar]);
 
-  const handleRent = (car_id: Car) =>{
-    setselectedCar(car_id)
-    setModal(true)
-  }
+  // const handleRent = (car_id: Car) =>{
+  //   setselectedCar(car_id)
+  //   setModal(true)
+  // }
 
-  const handleCloseModal = () => {
-   setModal(false)
-  }
+  // const handleCloseModal = () => {
+  //  setModal(false)
+  // }
 
+  const navigate = useNavigate()
   const  handleLogout = () =>{
-    navigate('/')
-    localStorage.clear()
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login")
     toast.success("Sikeres kiejelentkezés")
   }
 
   return (
     <>
-      <div className="flex flex-row text-center font-bold text-3xl text-white m-5 ">
-        <button className="text-sm bg-blue-500 rounded-lg  p-5" onClick={handleLogout}>
-        <FontAwesomeIcon icon={faArrowRightFromBracket} />
-        </button>
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1, transition: { duration: 0.5 } }}
-          className="bg-blue-500 p-3  rounded-lg w-fit mx-auto"
-        >
-          {" "}
-          Hello {user.email}
-        </motion.div>
-      </div>
-      <div className="flex text-white font-semibold m-5">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1, transition: { duration: 1.5 } }}
-        >
-          <div className="h-full flex items-center justify-center ">
-        <div className=" bg-blue-500  shadow-light  overflow-y-scroll h-48 w-96   rounded-lg">
+  <div className="flex flex-row text-center font-bold text-3xl text-white m-5 ">
+    <button className="text-sm bg-blue-500 rounded-lg p-5" onClick={handleLogout}>
+      <FontAwesomeIcon icon={faArrowRightFromBracket} />
+    </button>
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1, transition: { duration: 0.5 } }}
+      className="bg-blue-500 p-3 rounded-lg w-fit mx-auto"
+    >
+    {user?.name && <div>Hello {user.name}</div>}
+    </motion.div>
+  </div>
+
+  <div className="flex text-white font-semibold m-5">
+    <motion.div
+      initial={{ scale: 0 }}
+      animate={{ scale: 1, transition: { duration: 1.5 } }}
+    >
+      <div className="h-full flex items-center justify-center">
+        <div className="bg-blue-500 shadow-light overflow-y-scroll h-48 w-96 rounded-lg">
           <h1 className="text-center my-2">Kölcsönzések</h1>
-            ide jonnek az elmentek
+          ide jönnek az elmentek
         </div>
-          </div>
-        </motion.div>
-        <motion.div
+      </div>
+    </motion.div>
+
+    {/*Adatok*/}
+    <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1, transition: { duration: 1 } }}
           className=" bg-blue-500 flex ml-auto mr-0 rounded-lg flex-col items-right w-96 p-5 shadow-lite"
@@ -176,27 +180,16 @@ function User() {
             <input
               type="text"
               name="phone_number"
-              value={tempData.phone_number}
+              value={tempData.phone}
               onChange={handleChange}
               className="bg-slate-400 outline-none p-1"
             />
           ) : (
             <>
             <div>
-            phone number: {user.phone_number}
+            phone number: {user.phone}
                </div>
                </>
-          )}
-          {editing ? (
-            <input
-              type="text"
-              name="country"
-              value={tempData.address?.country}
-              onChange={handleChange}
-              className="bg-slate-400  outline-none p-1"
-            />
-          ) : (
-            <div>address country: {user.address?.country}</div>
           )}
           {editing ? (
             <input
@@ -223,24 +216,13 @@ function User() {
           {editing ? (
             <input
               type="text"
-              name="state"
-              value={tempData.address?.state}
+              name="postalCode"
+              value={tempData.address?.postalCode}
               onChange={handleChange}
               className="bg-slate-400  outline-none p-1"
             />
           ) : (
-            <div>address state: {user.address?.state}</div>
-          )}
-          {editing ? (
-            <input
-              type="text"
-              name="zip"
-              value={tempData.address?.zip}
-              onChange={handleChange}
-              className="bg-slate-400  outline-none p-1"
-            />
-          ) : (
-            <div>address zip: {user.address?.zip}</div>
+            <div>Postal Code: {user.address?.postalCode}</div>
           )}
           {editing ? (
             <button
@@ -261,102 +243,10 @@ function User() {
             </button>
           )}
         </motion.div>
-      </div>
+  </div>
+  <Cars />
+  </>
 
-      <motion.ul
-        className="grid md:grid-cols-4 gap-5 grid-cols-2"
-        variants={container}
-        initial="hidden"
-        animate="visible"
-        viewport={{ once: false }}
-      >
-        {cars.map((car, index) => (
-          <motion.li
-            key={index}
-            variants={itemTo}
-            className="flex flex-col h-full"
-          >
-            <div className="m-1 border-gray-300 border-2 rounded-lg shadow-light flex flex-col h-full">
-              <div className="h-78 overflow-hidden rounded-t-lg">
-                <img className="h-full rounded-t-lg" src={car.image_url} />
-              </div>
-
-              <div className="p-5 flex flex-col flex-grow">
-                <h5 className="text-2xl font-bold line-clamp-1 tracking-tight text-gray-900 ">
-                  {car.brand} {car.model} {car.year}
-                </h5>
-                <div className="mt-2 space-y-1 flex-grow">
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    Szín : {car.color}
-                  </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    Ár: {car.price}/nap
-                  </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    Km: {car.mileage}
-                  </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    {car.description}
-                  </p>
-                </div>
-                <button onClick={ () => handleRent(car)} className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-all hover:scale-105">
-                  Lefoglalás
-                </button>
-              </div>
-            </div>
-          </motion.li>
-        ))}
-      </motion.ul>
-      <Modal
-        open={modal}
-        onClose={handleCloseModal}
-        aria-labelledby="delete-confirmation-modal"
-        aria-describedby="delete-confirmation-description"
-        className="border-2 border-gray-500 rounded-lg"
-      >
-        <Box sx={{ ...style, width: 600 }} >
-          <h1 className="text-center font-bold text-2xl my-5">
-            Az autó lefoglalása
-          </h1>
-          <div className="flex ">
-          <DatePicker/>
-          <DatePicker/>
-          <div className="p-5 flex flex-col flex-grow">
-                <h5 className="text-2xl font-bold line-clamp-1 tracking-tight text-gray-900 ">
-                  {selectedCar?.brand} {selectedCar?.model} {selectedCar?.year}
-                </h5>
-                <div className="mt-2 space-y-1 flex-grow">
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    Szín : {selectedCar?.color}
-                  </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    Ár: {selectedCar?.price}/nap
-                  </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    Km: {selectedCar?.mileage}
-                  </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    {selectedCar?.description}
-                
-                  </p>
-                </div>
-          </div>
-          </div>
-          <Box className="flex justify-center mt-5 ">
-          <button 
-            className="p-2 m-5  text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600 transition-all hover:scale-105">
-              Igen
-            </button>
-            <button onClick={handleCloseModal}
-              className="p-2 m-5 text-bold font-medium text-center text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all hover:scale-105">
-              Mégse
-            </button>
-          </Box>
-        </Box>
-      </Modal>
-
-    </>
-  );
+);
 }
-
 export default User;

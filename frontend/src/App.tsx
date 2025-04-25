@@ -11,6 +11,7 @@ import Datepicker from './Components/DatePicker';
 import {SkeletonTheme} from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import ProtectedRoute  from './Components/ProtectedRoute';
+import Cars from './Components/Cars';
 
 
 function App() {

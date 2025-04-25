@@ -7,8 +7,7 @@ export interface ProtectedRouteProp {
   }
 
 const ProtectedRoute: FC<ProtectedRouteProp>  = ({children}) => {
-    const user = localStorage.getItem("user")
-    console.log(user)
+    const user = localStorage.getItem("token")
     if(!user)
     {
         return <Navigate to='/login' replace/> 

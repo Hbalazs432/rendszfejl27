@@ -2,14 +2,20 @@ import { ReactNode } from "react";
 
 export interface Car {
   id: string;
+  licensePlateNumber: string;
   brand: string;
   model: string;
-  year: number;
+  yearOfManufacture: number;
+  seats: number;
+  transmission: string;
+  distance: number;
+  consumption: number;
+  capacity: number;
+  engine: number;
   price: number;
-  mileage: number;
-  color: string;
   description: string;
   image_url?: string;
+  status: string;
 }
 
 export interface User {
