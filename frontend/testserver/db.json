@@ -44,6 +44,12 @@
       "email": "bence@gmail.com",
       "password": "123",
       "role": "user"
+    },
+    {
+      "id": "071b",
+      "email": "bence@gmail.com",
+      "password": "123",
+      "role": "user"
     }
   ],
   "cars": [

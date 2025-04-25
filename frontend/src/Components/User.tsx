@@ -9,7 +9,11 @@ import {container, itemTo} from '../styles/styles'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 import {Car, User as UserInterface} from '../interfaces/interfaces'
-
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
+import { style } from "../styles/styles";
 
 
 
@@ -21,7 +25,10 @@ function User() {
   const [cars, setCars] = useState<Car[]>([]);
   const [startDate, setstartDate] = useState<Dayjs | null>(null);
   const [endDate, setendDate] = useState<Dayjs | null>(null);
+  const [modal, setModal] = useState(false)
+  const [selectedCar, setselectedCar] = useState<Car | null>(null)
   const navigate = useNavigate()
+
 
 
 
@@ -110,6 +117,20 @@ function User() {
     }
   };
 
+
+  useEffect(() => {
+    console.log("Selected car updated:", selectedCar);
+  }, [selectedCar]);
+
+  const handleRent = (car_id: Car) =>{
+    setselectedCar(car_id)
+    setModal(true)
+  }
+
+  const handleCloseModal = () => {
+   setModal(false)
+  }
+
   const  handleLogout = () =>{
     navigate('/')
     localStorage.clear()
@@ -136,19 +157,12 @@ function User() {
           initial={{ scale: 0 }}
           animate={{ scale: 1, transition: { duration: 1.5 } }}
         >
-        <div className=" bg-blue-500 overflow-y-scroll h-48 w-96   rounded-lg">
+          <div className="h-full flex items-center justify-center ">
+        <div className=" bg-blue-500  shadow-light  overflow-y-scroll h-48 w-96   rounded-lg">
           <h1 className="text-center my-2">Kölcsönzések</h1>
-          {cars.map((car, index) => (
-          <div  key={index} className="bg-white border-2 rounded-lg text-black my-5 mx-3 ">
-            <h1 className="font-bold ">{car.brand} {car.model} {car.year}</h1>
-            <div>Szín: {car.color}</div>
-            <div>Ár: {car.price}/nap</div>
-            <div>Km: {car.mileage}</div>
-            <div>Leírás: {car.description}</div>
-            <div>status</div>
-          </div>   
-          ))}
+            ide jonnek az elmentek
         </div>
+          </div>
         </motion.div>
         <motion.div
           initial={{ scale: 0 }}
@@ -285,7 +299,7 @@ function User() {
                     {car.description}
                   </p>
                 </div>
-                <button className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-all hover:scale-105">
+                <button onClick={ () => handleRent(car)} className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 transition-all hover:scale-105">
                   Lefoglalás
                 </button>
               </div>
@@ -293,6 +307,54 @@ function User() {
           </motion.li>
         ))}
       </motion.ul>
+      <Modal
+        open={modal}
+        onClose={handleCloseModal}
+        aria-labelledby="delete-confirmation-modal"
+        aria-describedby="delete-confirmation-description"
+        className="border-2 border-gray-500 rounded-lg"
+      >
+        <Box sx={{ ...style, width: 600 }} >
+          <h1 className="text-center font-bold text-2xl my-5">
+            Az autó lefoglalása
+          </h1>
+          <div className="flex ">
+          <DatePicker/>
+          <DatePicker/>
+          <div className="p-5 flex flex-col flex-grow">
+                <h5 className="text-2xl font-bold line-clamp-1 tracking-tight text-gray-900 ">
+                  {selectedCar?.brand} {selectedCar?.model} {selectedCar?.year}
+                </h5>
+                <div className="mt-2 space-y-1 flex-grow">
+                  <p className="mb-3 font-normal text-gray-700 ">
+                    Szín : {selectedCar?.color}
+                  </p>
+                  <p className="mb-3 font-normal text-gray-700 ">
+                    Ár: {selectedCar?.price}/nap
+                  </p>
+                  <p className="mb-3 font-normal text-gray-700 ">
+                    Km: {selectedCar?.mileage}
+                  </p>
+                  <p className="mb-3 font-normal text-gray-700 ">
+                    {selectedCar?.description}
+                
+                  </p>
+                </div>
+          </div>
+          </div>
+          <Box className="flex justify-center mt-5 ">
+          <button 
+            className="p-2 m-5  text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600 transition-all hover:scale-105">
+              Igen
+            </button>
+            <button onClick={handleCloseModal}
+              className="p-2 m-5 text-bold font-medium text-center text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all hover:scale-105">
+              Mégse
+            </button>
+          </Box>
+        </Box>
+      </Modal>
+
     </>
   );
 }
