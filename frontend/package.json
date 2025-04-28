@@ -19,6 +19,7 @@
     "@mui/material": "^7.0.1",
     "@mui/x-date-pickers": "^7.28.2",
     "@tailwindcss/vite": "^4.0.17",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "flowbite-react": "^0.11.7",
     "json-server": "^1.0.0-beta.3",

@@ -5,14 +5,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
-// import {containerVariants, itemVariants, style} from '../styles/styles'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
-import {Car} from '../interfaces/interfaces'
-import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
 import {jwtDecode} from "jwt-decode";
 import Cars from "./Cars";
 
@@ -25,11 +19,8 @@ function User() {
   });
   const [editing, setEditing] = useState(false);
   const [tempData, setTempData] = useState(user.address);
-  const [cars, setCars] = useState<Car[]>([]);
   const [startDate, setstartDate] = useState<Dayjs | null>(null);
   const [endDate, setendDate] = useState<Dayjs | null>(null);
-  const [modal, setModal] = useState(false)
-  const [selectedCar, setselectedCar] = useState<Car | null>(null)
   
 
 
@@ -38,7 +29,7 @@ function User() {
 // adatlekérés bejelentkezés után
   useEffect(() => {
     const token = localStorage.getItem("token");
-    
+    console.log("login token",token)
     if (!token) {
       console.log("Nincs token, kérlek jelentkezz be.");
       return;
@@ -57,7 +48,6 @@ function User() {
         const userData = await response.json();
         setUser(userData);
         setTempData(userData);
-        console.log(userData)
         }
         loadUserData();
       } catch (error) {
@@ -117,19 +107,6 @@ function User() {
     }
   };
 
-
-  // useEffect(() => {
-  //   console.log("Selected car updated:", selectedCar);
-  // }, [selectedCar]);
-
-  // const handleRent = (car_id: Car) =>{
-  //   setselectedCar(car_id)
-  //   setModal(true)
-  // }
-
-  // const handleCloseModal = () => {
-  //  setModal(false)
-  // }
 
   const navigate = useNavigate()
   const  handleLogout = () =>{
@@ -244,7 +221,7 @@ function User() {
           )}
         </motion.div>
   </div>
-  <Cars />
+  <Cars  user={user}/>
   </>
 
 );

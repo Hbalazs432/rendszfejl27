@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export interface Car {
   id: string;
   licensePlateNumber: string;
@@ -16,6 +14,10 @@ export interface Car {
   description: string;
   image_url?: string;
   status: string;
+}
+
+export interface CarsProps{
+  user: User;
 }
 
 export interface User {

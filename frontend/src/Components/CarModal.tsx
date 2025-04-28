@@ -1,12 +1,38 @@
-import React from 'react'
-import Backdrop from '@mui/material/Backdrop';
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Fade from '@mui/material/Fade';
 import { style } from "../styles/styles";
 import { Car } from '../interfaces/interfaces';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format } from 'date-fns';
 
-function CarModal({car, open, handleClose}:{car: Car | null; open: boolean; handleClose: () => void}) {
+
+function CarModal({
+  car,
+  open,
+  handleClose,
+  handleRent,
+  userEmail,
+}: {
+  car: Car | null;
+  open: boolean;
+  handleClose: () => void;
+  handleRent: (carId: number, userEmail: string) => void;
+  userEmail: string;
+}) {
+  
+
+  // const [startDate, setstartDate] = useState<Date | null>(start);
+  // const [endDate, setendDate] = useState<Date | null>(end);
+  const handleDateChange= (date: Date | null) => {
+    if(date){
+      const formattedDate =  format(date, 'yyyy-MM-dd');
+      console.log(formattedDate)
+      // setstartDate(date)
+      // setendDate(date)
+    }
+  }
+
   return (
     <div>
     <Modal
@@ -45,10 +71,13 @@ function CarModal({car, open, handleClose}:{car: Car | null; open: boolean; hand
                     Státusz: {(car?.status ==="Available"? "Elérhető": "Nem elérhető")}
                   </p>
                 </div>
+                {/* <DatePicker label="Bérlés kezdésének ideje" value={startDate} onChange={handleDateChange}></DatePicker>
+                <DatePicker label="Bérlés lejáratának ideje" value={endDate} onChange={handleDateChange}></DatePicker> */}
                 </div>
           </div>
           <Box className="flex justify-center mt-5 ">
           <button 
+            onClick={() => handleRent(Number(car?.id), userEmail)}
             className="p-2 m-5  text-bold font-medium text-center text-white bg-green-500 rounded-lg hover:bg-green-600 transition-all hover:scale-105">
               Igen
             </button>

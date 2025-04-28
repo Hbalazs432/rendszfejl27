@@ -3,7 +3,8 @@ import { PropagateLoader } from "react-spinners";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify';
-import {motion} from 'framer-motion'; 
+import {motion} from 'framer-motion';
+import { jwtDecode } from "jwt-decode";
 
 
 function Login() {
@@ -25,19 +26,28 @@ function Login() {
         body: JSON.stringify({Email, Password}),
       })
       const data = await response.json();
+      const token = data.token;
       if(response.ok){
         setIsPending(false);
         setEmail("");
-        setPassword("");
-        toast.success("Sikeres bejelentkezés!");
-        localStorage.setItem('token', data.token);
-        navigate('/user', {state: {user: data.token}});
+        setPassword("");    
+        localStorage.setItem('token', token);
+
+        const decode= jwtDecode(token)
+        const role = decode["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+
+        if(role === "Customer")
+        {
+          navigate('/user', {state: {user: token}});
+          toast.success("Sikeres bejelentkezés!");
+        }
+        else if(role === "Administrator")
+        {
+          navigate('/admin', {state: {user: token}})
+          toast.success("Sikeres bejelentkezés!");
+        }
       }
-    //   const user = data[0];
-    //   if(user.role === "admin"){
-    //     navigate('/admin', {state: {user}});
-    //     toast.success("Sikeres bejelentkezés!");
-    //   }
     }catch(error){
       console.log("Hiba történt", error);
       toast.error("Hibás email cím vagy jelszó!");

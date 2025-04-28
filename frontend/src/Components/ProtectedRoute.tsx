@@ -1,5 +1,5 @@
 import {Navigate } from 'react-router-dom'
-import {FC,  ReactNode } from 'react'
+import React, {FC,  ReactNode } from 'react'
 
 
 export interface ProtectedRouteProp {
@@ -8,6 +8,7 @@ export interface ProtectedRouteProp {
 
 const ProtectedRoute: FC<ProtectedRouteProp>  = ({children}) => {
     const user = localStorage.getItem("token")
+    console.log(user)
     if(!user)
     {
         return <Navigate to='/login' replace/> 
