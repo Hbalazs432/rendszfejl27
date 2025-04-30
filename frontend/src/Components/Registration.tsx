@@ -195,7 +195,7 @@ function Registration() {
             </button>
             <div className="text-center font-medium text-sm">
               Van már fiókod?{" "}
-              <a href="/login" className="hover:underline">
+              <a href="/" className="hover:underline">
                 Jelentkezz be
               </a>
             </div>

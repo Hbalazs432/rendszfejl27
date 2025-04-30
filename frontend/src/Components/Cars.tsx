@@ -7,14 +7,14 @@ import { toast } from "react-toastify";
 
 
 
-function Cars({ user }: CarsProps) {
+function Cars({user}: CarsProps) {
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [modal, setModal] = useState(false);
 
   useEffect(() => {
     const getCars = async () => {
-      const response = await fetch("https://localhost:7175/api/Cars", {
+      const response = await fetch("https://localhost:7175/api/Cars/list-available-cars", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -29,6 +29,7 @@ function Cars({ user }: CarsProps) {
   }, []);
 
   const handleRent = async (car_id: number, userEmail: string) => {
+    // console.log(selectedCar)
     try {
       const response = await fetch('https://localhost:7175/api/Rents', {
         method: "POST",
@@ -92,9 +93,6 @@ function Cars({ user }: CarsProps) {
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
                   Km: {car.distance}
-                </p>
-                <p className="mb-3 font-normal text-gray-700 ">
-                  {car.description}
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
                   Ülések: {car.seats}

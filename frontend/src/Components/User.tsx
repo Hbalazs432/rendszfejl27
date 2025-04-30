@@ -9,51 +9,75 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 import {jwtDecode} from "jwt-decode";
 import Cars from "./Cars";
+import { Car, Rents  } from "../interfaces/interfaces";
+import { cardActionAreaClasses } from "@mui/material";
 
 
 function User() {
   const [user, setUser] = useState<any>({
     name: '',
-    phone: '',
+    phone_number: '',
     address: { street: '', city: '', postalCode: '' }
   });
   const [editing, setEditing] = useState(false);
-  const [tempData, setTempData] = useState(user.address);
+  const [tempData, setTempData] = useState(user);
   const [startDate, setstartDate] = useState<Dayjs | null>(null);
   const [endDate, setendDate] = useState<Dayjs | null>(null);
+  const [historyCars, sethistoryCars] = useState<Rents[]>([])
   
 
-
-
-
-// adatlekérés bejelentkezés után
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    console.log("login token",token)
-    if (!token) {
-      console.log("Nincs token, kérlek jelentkezz be.");
-      return;
-    }
-    try {
-        const decoded = jwtDecode<any>(token);
-        const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-        const loadUserData = async () => {
-        const response = await fetch(
-          `https://localhost:7175/api/Users/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const userData = await response.json();
-        setUser(userData);
-        setTempData(userData);
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.log("Nincs token, kérlek jelentkezz be.");
+    return;
+  }
+  try {
+    const decoded = jwtDecode<any>(token);
+    const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+    const loadUserData = async () => {
+      const response = await fetch(
+        `https://localhost:7175/api/Users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-        loadUserData();
-      } catch (error) {
-        console.error("Hiba történt a felhasználó adatainak betöltésekor:", error);
-      }
-    }, []);
+      );
+      const userData = await response.json();
+      setUser(userData);
+      setTempData(userData); 
+    };
+    loadUserData();
+  } catch (error) {
+    console.error("Hiba történt a felhasználó adatainak betöltésekor:", error);
+  }
+}, []);
+
+
+
+useEffect(() =>{
+  if(!user.id) return;
+  const getHistoryCars = async () => {
+    if(!user.id) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+      
+        const response = await fetch(`https://localhost:7175/api/Rents/user-rents`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (response.ok) {
+          const showHistoryCars = await response.json();
+          sethistoryCars(showHistoryCars); 
+        } else {
+          console.error("Nem sikerült lekérni az autók történetét:", response.status);
+        }
+    };
+    getHistoryCars()
+  }, [user])
 
    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,44 +100,70 @@ function User() {
       }
     };
 
-  // const handleDateChange = (newDate: Dayjs | null) => {
-  //   setstartDate(newDate);
-  //   setendDate(newDate);
-  //   const formatDatum = (date: Dayjs | null): string => {
-  //     return date ? date.format("YYYY-MMMM-DD") : "";
-  //   };
-  //   console.log("start", formatDatum(newDate));
-  // };
 
-  const handleSave = async () => {
-    //csere majd a kellőre
-    try {
-      const response = await fetch(
-        `https://localhost:7175/api/update-address/${user.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(tempData),
-        }
-      );
-      const updatedUser = await response.json();
-      setUser(updatedUser);
-      setTempData(updatedUser);
-      setEditing(false);
-      toast.success("Sikeres adatmódosítás!");
-      console.log("Mentve:", user);
-    } catch (error) {
-      console.log("Hiba történt", error);
+ const handleSave = async () => {
+  // Cím adatok eltávolítása az id-ről
+  try {
+    const token = localStorage.getItem("token");
+
+
+    //TODO FIX 
+
+
+
+
+    // // Cím mentése
+    // const addressResponse = await fetch("https://localhost:7175/api/Users/update-address", {
+    //   method: "PUT",
+    //   headers: { 
+    //     "Content-Type": "application/json",  
+    //     Authorization: `Bearer ${token}`
+    //   },
+    //   body: JSON.stringify({ address: addresswithoutid }),
+    // });
+
+    // if (!addressResponse.ok) {
+    //   const error = await addressResponse.json();
+    //   console.error("Cím hiba:", error);
+    //   throw new Error("Hiba történt a cím mentésekor");
+    // }
+
+    // Telefonszám mentése
+    const phoneResponse = await fetch("https://localhost:7175/api/Users/update-phone", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json", 
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ phone: tempData.phone })
+    });
+    if (!phoneResponse.ok) {
+      const error = await phoneResponse.json();
+      console.error("Telefonszám hiba:", error);
+      throw new Error("Hiba történt a telefonszám mentésekor");
     }
-  };
+
+    const updatedUser = await phoneResponse.json();
+    setUser(updatedUser);
+    setTempData(updatedUser);
+    setEditing(false);
+    toast.success("Sikeres adatmódosítás!");
+    console.log("Mentve:", updatedUser);
+
+  } catch (error) {
+    console.log("Hiba történt:", error);
+    toast.error("Hiba történt a mentés során");
+  }
+};
+
 
 
   const navigate = useNavigate()
   const  handleLogout = () =>{
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login")
-    toast.success("Sikeres kiejelentkezés")
+    navigate("/")
+    toast.success("Sikeres kijelentkezés")
   }
 
   return (
@@ -137,9 +187,46 @@ function User() {
       animate={{ scale: 1, transition: { duration: 1.5 } }}
     >
       <div className="h-full flex items-center justify-center">
-        <div className="bg-blue-500 shadow-light overflow-y-scroll h-48 w-96 rounded-lg">
+        <div className="bg-blue-500 shadow-light overflow-y-scroll h-48 w-auto rounded-lg">
           <h1 className="text-center my-2">Kölcsönzések</h1>
-          ide jönnek az elmentek
+          {historyCars.length > 0 ? (
+      historyCars.map((rent) => (
+      <div className="m-5 p-5 border-2 rounded-lg group relative" key={rent.id}>
+      {/* Tooltip */}
+      <div className="absolute -top-5 left-1/2 -translate-x-1/2 -translate-y-full z-50 bg-gray-800 text-white text-sm px-4 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+        ha lesz ra ido
+        szepseg
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-800"></div>
+      </div>
+
+      {/* Kártyatartalom */}
+      <div className="flex justify-center items-center space-x-4">
+        
+        <p>Lefoglalás kezdete: {rent.startDate}</p>
+        <p>Lefoglalás vége: {rent.endDate}</p>
+        <p
+          className={
+            rent.rentStatus === "Pending"
+              ? "bg-yellow-500 p-2 rounded-lg"
+              : rent.rentStatus === "Accepted"
+              ? "bg-green-600 p-2 rounded-lg"
+              : "bg-red-500 p-2 rounded-lg"
+          }
+        >
+          {rent.rentStatus === "Pending"
+            ? "ügyintézés alatt"
+            : rent.rentStatus === "Accepted"
+            ? "elfogadva"
+            : "elutasítva"}
+        </p>
+      </div>
+    </div>
+  ))
+) : (
+  <div>jelenleg nincs bérlés</div>
+)}
+
+ 
         </div>
       </div>
     </motion.div>
@@ -156,7 +243,7 @@ function User() {
           {editing ? (
             <input
               type="text"
-              name="phone_number"
+              name="phone"
               value={tempData.phone}
               onChange={handleChange}
               className="bg-slate-400 outline-none p-1"

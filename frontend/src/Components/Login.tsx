@@ -27,8 +27,9 @@ function Login() {
       })
       const data = await response.json();
       const token = data.token;
+     
       if(response.ok){
-        setIsPending(false);
+        setIsPending(true);
         setEmail("");
         setPassword("");    
         localStorage.setItem('token', token);
@@ -47,6 +48,9 @@ function Login() {
           navigate('/admin', {state: {user: token}})
           toast.success("Sikeres bejelentkezés!");
         }
+      }
+      else{
+        toast.error("Hibás email cím vagy jelszó!");
       }
     }catch(error){
       console.log("Hiba történt", error);
@@ -92,7 +96,7 @@ function Login() {
             </div>
             <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full mb-5 px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Bejelentkezés</button>
             <div className="text-center font-medium text-sm">
-            Nincs még fiókod? <a href="/" className="hover:underline">Regisztrálj</a>
+            Nincs még fiókod? <a href="/registration" className="hover:underline">Regisztrálj</a>
             </div>
         </form>
         )}

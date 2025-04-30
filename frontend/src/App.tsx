@@ -1,4 +1,5 @@
 import './App.css'
+import React from 'react';
 import Registration from './Components/Registration'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
@@ -21,8 +22,8 @@ function App() {
       <SkeletonTheme baseColor='#313131' highlightColor='#525252'>
     <Router>
       <Routes>
-        <Route path="/"  element={<><Datepicker/><Registration/></>} />
-        <Route path="/login" element={<><Datepicker/><Login /></>} />
+        <Route path="/"  element={<><Datepicker/><Login/></>} />
+        <Route path="/registration" element={<><Datepicker/><Registration /></>} />
         <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
         <Route path="/user" element={<ProtectedRoute><User/></ProtectedRoute>} />
       </Routes>
