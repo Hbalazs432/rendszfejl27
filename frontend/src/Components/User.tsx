@@ -10,7 +10,6 @@ import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 import {jwtDecode} from "jwt-decode";
 import Cars from "./Cars";
 import { Car, Rents  } from "../interfaces/interfaces";
-import { cardActionAreaClasses } from "@mui/material";
 
 
 function User() {
@@ -21,8 +20,7 @@ function User() {
   });
   const [editing, setEditing] = useState(false);
   const [tempData, setTempData] = useState(user);
-  const [startDate, setstartDate] = useState<Dayjs | null>(null);
-  const [endDate, setendDate] = useState<Dayjs | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0)
   const [historyCars, sethistoryCars] = useState<Rents[]>([])
   
 
@@ -77,7 +75,7 @@ useEffect(() =>{
         }
     };
     getHistoryCars()
-  }, [user])
+  }, [user, refreshKey])
 
    
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,7 +199,7 @@ useEffect(() =>{
 
       {/* Kártyatartalom */}
       <div className="flex justify-center items-center space-x-4">
-        
+        <p>Id: {rent.carId}</p>
         <p>Lefoglalás kezdete: {rent.startDate}</p>
         <p>Lefoglalás vége: {rent.endDate}</p>
         <p
@@ -308,7 +306,7 @@ useEffect(() =>{
           )}
         </motion.div>
   </div>
-  <Cars  user={user}/>
+  <Cars  user={user} onRefresh={() => setRefreshKey(prev => prev + 1)}/>
   </>
 
 );

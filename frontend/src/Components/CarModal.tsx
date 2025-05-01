@@ -1,10 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { style } from "../styles/styles";
 import { Car } from '../interfaces/interfaces';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format } from 'date-fns';
+import dayjs, {Dayjs} from 'dayjs';
+
+interface carModalProps {
+  car: Car | null;
+  open: boolean;
+  handleClose: () => void;
+  handleRent: (carId: number, userEmail: string) => void;
+  userEmail: string;
+  onDatesChange: (start: Date | null, end: Date | null) => void;
+}
 
 
 function CarModal({
@@ -13,25 +23,29 @@ function CarModal({
   handleClose,
   handleRent,
   userEmail,
-}: {
-  car: Car | null;
-  open: boolean;
-  handleClose: () => void;
-  handleRent: (carId: number, userEmail: string) => void;
-  userEmail: string;
-}) {
+  onDatesChange
+  }: 
+  carModalProps) {
   
 
-  // const [startDate, setstartDate] = useState<Date | null>(start);
-  // const [endDate, setendDate] = useState<Date | null>(end);
-  const handleDateChange= (date: Date | null) => {
-    if(date){
-      const formattedDate =  format(date, 'yyyy-MM-dd');
-      console.log(formattedDate)
-      // setstartDate(date)
-      // setendDate(date)
+   const [startDate, setstartDate] = useState<Dayjs | null>(null);
+  const [endDate, setendDate] = useState<Dayjs | null>(null);
+ 
+     const handleStartDateChange = (date: Dayjs | null) =>{
+      if(date){
+        setstartDate(date)
+      }
     }
-  }
+    const handleEndDateChange = (date: Dayjs | null) =>{
+      if(date){
+        setendDate(date)
+      }
+    }
+  
+  
+    useEffect(()=>{
+   
+  }, [startDate, endDate])
 
   return (
     <div>
@@ -61,9 +75,7 @@ function CarModal({
                   <p className="mb-3 font-normal text-gray-700 ">
                     Km: {car?.distance}
                   </p>
-                  <p className="mb-3 font-normal text-gray-700 ">
-                    {car?.description}
-                  </p>
+                 
                   <p className="mb-3 font-normal text-gray-700 ">
                     Ülések: {car?.seats}
                   </p>
@@ -71,8 +83,11 @@ function CarModal({
                     Státusz: {(car?.status ==="Available"? "Elérhető": "Nem elérhető")}
                   </p>
                 </div>
-                {/* <DatePicker label="Bérlés kezdésének ideje" value={startDate} onChange={handleDateChange}></DatePicker>
-                <DatePicker label="Bérlés lejáratának ideje" value={endDate} onChange={handleDateChange}></DatePicker> */}
+                <div className='my-5 flex'>
+                <DatePicker label="Bérlés kezdésének ideje" value={startDate} onChange={handleStartDateChange}></DatePicker>
+                <DatePicker label="Bérlés lejáratának ideje" value={endDate} onChange={handleEndDateChange}></DatePicker> 
+
+                </div>
                 </div>
           </div>
           <Box className="flex justify-center mt-5 ">

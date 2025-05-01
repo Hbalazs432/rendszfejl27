@@ -4,13 +4,16 @@ import { motion } from "framer-motion";
 import { containerVariants, itemVariants } from '../styles/styles';
 import CarModal from './CarModal';
 import { toast } from "react-toastify";
+import {format} from 'date-fns';
 
 
-
-function Cars({user}: CarsProps) {
+function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(false);  
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  
 
   useEffect(() => {
     const getCars = async () => {
@@ -26,11 +29,28 @@ function Cars({user}: CarsProps) {
       console.log(cars);
     };
     getCars();
-  }, []);
+  }, []); 
+
+
+  const handleDatesChange = (start: Date | null, end: Date | null) => {
+    setStartDate(start);
+    setEndDate(end);
+    if(start){
+      const formattedDate =  format(start, 'yyyy-MM-dd');
+      console.log("Dátumok a szülőben:", formattedDate, end);
+    }
+    if(end){
+      const formattedDate = format(end, 'yyyy-MM-dd')
+      console.log(formattedDate)
+    }
+  };
 
   const handleRent = async (car_id: number, userEmail: string) => {
-    // console.log(selectedCar)
     try {
+          if (!startDate || !endDate) {
+      toast.error("Hiányzó adat a foglaláshoz.");
+      return;
+     }
       const response = await fetch('https://localhost:7175/api/Rents', {
         method: "POST",
         headers: {
@@ -40,14 +60,14 @@ function Cars({user}: CarsProps) {
         body: JSON.stringify({
           CarId: car_id,
           Email: userEmail,
-          StartDate: "2025-12-12",
-          EndDate: "2025-12-13",
+          StartDate: format(startDate, 'yyyy-MM-dd'),
+          EndDate: format(endDate, 'yyyy-MM-dd'),
         }),
       });
       if (response.ok) {
         toast.success('Sikeres foglalás');
+        onRefresh()
         setModal(false)
-        console.log("lefoglalt auto", selectedCar)
       } else {
         console.error('Foglalás sikertelen', await response.text());
       }
@@ -111,7 +131,7 @@ function Cars({user}: CarsProps) {
           </div>
         </motion.div>
       ))}
-      <CarModal car={selectedCar} open={modal} handleClose={handleCloseModal} handleRent={handleRent} userEmail={user.email}/>
+      <CarModal onDatesChange={handleDatesChange} car={selectedCar} open={modal} handleClose={handleCloseModal} handleRent={handleRent} userEmail={user.email}/>
     </motion.div>
   );
 }
