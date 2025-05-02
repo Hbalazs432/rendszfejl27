@@ -1,3 +1,18 @@
+export interface CarData {
+  licensePlateNumber: '',
+  brand: '',
+  model: '',
+  yearOfManufacture: 0,
+  seats: 0,
+  transmission: '',
+  distance: 0,
+  consumption: 0,
+  capacity: 0,
+  carCategoryId: 0,
+  engine: '',
+  price: 0,
+}
+
 export interface Car {
   id: number;
   licensePlateNumber: string;
@@ -14,7 +29,7 @@ export interface Car {
     Id: number,
     Name: string
   }
-  engine: number;
+  engine: string;
   price: number;
   status: string;
 }
