@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
 import { SelectChangeEvent } from "@mui/material";
+import AdminCars from "./AdminCars";
 
 
 // TODO CAR DELETE 
@@ -23,8 +24,9 @@ function Admin() {
   });
   const transmissionOptions = ["Manual", "Automatic"];
   const engineOptions = ["Diesel", "Electronic"];
+  const [refreshKey, setRefreshKey] = useState(0)
   const [openCarModal, setopenCarModal] = useState(false);
-  const [addedCar, setaddedCar] = useState<any>(
+  const [addedCar, setaddedCar] = useState<CarData>(
     {
       licensePlateNumber: "",
       brand: "",
@@ -53,6 +55,8 @@ function Admin() {
     }
     try {
       const decoded = jwtDecode(token);
+      const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+      console.log(role)
       const userId =
         decoded[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -83,11 +87,25 @@ function Admin() {
     setopenCarModal(false);
   };
 
-  const handleDataChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleDataChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
+  
+    // Automatikus szám konvertálás, ha number mező
+    const numericFields = [
+      "yearOfManufacture",
+      "seats",
+      "distance",
+      "consumption",
+      "capacity",
+      "carCategoryId",
+      "price"
+    ];
+  
     setaddedCar({
       ...addedCar,
-      [name]: value,
+      [name]: numericFields.includes(name) ? Number(value) : value,
     });
   };
 
@@ -139,9 +157,10 @@ function Admin() {
         throw new Error(`Hiba történt a kocsi létrehozása közben. ${errorText}, ${response.status}`);
       }
       toast.success("Sikeres hozzáadás.")
+      setRefreshKey(prev => prev + 1);
       } catch (error) {
-      console.error("Hiba történt:", error);
-      toast.error("Hiba a feltöltés során");
+        console.error("Hiba történt:", error);
+        toast.error("Hiba a feltöltés során");
     }
   };
 
@@ -222,7 +241,7 @@ function Admin() {
                   variant="outlined"
                   name="capacity"
                   type="number"
-                  value={parseInt(addedCar.capacity)}
+                  value={addedCar.capacity}
                   onChange={handleDataChange}
                 />
                 <TextField
@@ -231,7 +250,7 @@ function Admin() {
                   variant="outlined"
                   name="yearOfManufacture"
                   type="number"
-                  value={parseInt(addedCar.yearOfManufacture)}
+                  value={addedCar.yearOfManufacture}
                   onChange={handleDataChange}
                 />
                 <TextField
@@ -240,7 +259,7 @@ function Admin() {
                   variant="outlined"
                   name="seats"
                   type="number"
-                  value={parseInt(addedCar.seats)}
+                  value={addedCar.seats}
                   onChange={handleDataChange}
                 />
                 <FormControl fullWidth>
@@ -281,7 +300,7 @@ function Admin() {
                   variant="outlined"
                   name="distance"
                   type="number"
-                  value={parseInt(addedCar.distance)}
+                  value={addedCar.distance}
                   onChange={handleDataChange}
                 />
                 <TextField
@@ -290,7 +309,7 @@ function Admin() {
                   variant="outlined"
                   name="consumption"
                   type="number"
-                  value={parseFloat(addedCar.consumption)}
+                  value={addedCar.consumption}
                   onChange={handleDataChange}
                 />
                 <TextField
@@ -299,7 +318,7 @@ function Admin() {
                   variant="outlined"
                   name="carCategoryId"
                   type="number"
-                  value={parseInt(addedCar.carCategoryId)}
+                  value={addedCar.carCategoryId}
                   onChange={handleDataChange}
                 />
                 <TextField
@@ -308,11 +327,11 @@ function Admin() {
                   variant="outlined"
                   name="price"
                   type="number"
-                  value={parseInt(addedCar.price)}
+                  value={addedCar.price}
                   onChange={handleDataChange}
                 />  
               </div>
-
+ 
               <button
                 type="submit"
                 className=" m-10 text-white bg-blue-700 hover:bg-blue-800 transition-all hover:scale-105 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  mb-5 px-5 py-2.5 text-center"
@@ -323,8 +342,9 @@ function Admin() {
           </Box>
         </Fade>
       </Modal>
+      <AdminCars refreshKey={refreshKey} />
     </div>
-  );
+);
 }
 
 export default Admin;

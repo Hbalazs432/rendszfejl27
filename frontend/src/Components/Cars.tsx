@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import {format} from 'date-fns';
 
 
+
 function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
@@ -32,20 +33,23 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
   }, []); 
 
 
-  const handleDatesChange = (start: Date | null, end: Date | null) => {
+  const handleDatesChangeStart = (start: Date | null) => {
     setStartDate(start);
-    setEndDate(end);
     if(start){
       const formattedDate =  format(start, 'yyyy-MM-dd');
-      console.log("Dátumok a szülőben:", formattedDate, end);
+      console.log("Dátumok a szülőben:", formattedDate, start);
     }
+  }
+  const handleDatesChangeEnd = (end: Date | null) =>{
+    setEndDate(end);
     if(end){
       const formattedDate = format(end, 'yyyy-MM-dd')
-      console.log(formattedDate)
+      console.log("Dátumok a szülőben:", formattedDate, end)
     }
   };
 
   const handleRent = async (car_id: number, userEmail: string) => {
+    console.log(startDate, endDate)
     try {
           if (!startDate || !endDate) {
       toast.error("Hiányzó adat a foglaláshoz.");
@@ -131,7 +135,7 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
           </div>
         </motion.div>
       ))}
-      <CarModal onDatesChange={handleDatesChange} car={selectedCar} open={modal} handleClose={handleCloseModal} handleRent={handleRent} userEmail={user.email}/>
+      <CarModal onDatesChangeEnd={handleDatesChangeEnd} onDatesChangeStart={handleDatesChangeStart} car={selectedCar} open={modal} handleClose={handleCloseModal} handleRent={handleRent} userEmail={user.email}/>
     </motion.div>
   );
 }

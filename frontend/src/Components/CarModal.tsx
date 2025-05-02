@@ -13,7 +13,8 @@ interface carModalProps {
   handleClose: () => void;
   handleRent: (carId: number, userEmail: string) => void;
   userEmail: string;
-  onDatesChange: (start: Date | null, end: Date | null) => void;
+  onDatesChangeStart: (start: Date | null) => void;
+  onDatesChangeEnd : (end: Date | null) => void;
 }
 
 
@@ -23,7 +24,8 @@ function CarModal({
   handleClose,
   handleRent,
   userEmail,
-  onDatesChange
+  onDatesChangeStart,
+  onDatesChangeEnd
   }: 
   carModalProps) {
   
@@ -32,13 +34,17 @@ function CarModal({
   const [endDate, setendDate] = useState<Dayjs | null>(null);
  
      const handleStartDateChange = (date: Dayjs | null) =>{
-      if(date){
-        setstartDate(date)
+       if(date){
+         setstartDate(date)
+         console.log(date)
+         onDatesChangeStart(date)
       }
     }
     const handleEndDateChange = (date: Dayjs | null) =>{
       if(date){
         setendDate(date)
+        console.log(endDate)
+        onDatesChangeEnd(date)
       }
     }
   
