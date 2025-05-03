@@ -28,7 +28,7 @@ namespace BerAuto.Controllers
 
 
         [HttpPost("create-role")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> CreateRole(RoleCreateDto roleCreateDto)
         {
             try
@@ -43,7 +43,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpPut("update-role-{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateRole(int id, RoleUpdateDto roleUpdateDto)
         {
             try
@@ -58,7 +58,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpDelete("delete-role-{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             try
@@ -75,7 +75,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("roles")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> ListRoles()
         {
             try
@@ -164,7 +164,7 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetUser(int id)
         { 
             try
