@@ -4,7 +4,6 @@ import Modal from '@mui/material/Modal';
 import { style } from "../styles/styles";
 import { Car } from '../interfaces/interfaces';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { format } from 'date-fns';
 import dayjs, {Dayjs} from 'dayjs';
 
 interface carModalProps {

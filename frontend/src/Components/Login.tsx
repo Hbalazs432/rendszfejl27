@@ -4,10 +4,12 @@ import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {toast} from 'react-toastify';
 import {motion} from 'framer-motion';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { CustomJwtPayload } from "../interfaces/interfaces";
 
 
 function Login() {
+
   const [Email, setEmail] = useState<string>("");
   const [Password, setPassword] = useState<string>("");
   const [isPending, setIsPending] = useState(false);
@@ -34,7 +36,7 @@ function Login() {
         setPassword("");    
         localStorage.setItem('token', token);
 
-        const decode= jwtDecode(token)
+        const decode= jwtDecode<CustomJwtPayload>(token)
         const role = decode["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
 

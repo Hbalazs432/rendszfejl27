@@ -14,11 +14,14 @@ import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
 import { SelectChangeEvent } from "@mui/material";
 import AdminCars from "./AdminCars";
+import { CustomJwtPayload } from "../interfaces/interfaces";
 
 
-// TODO CAR DELETE 
 // TODO CAR MODIFY 
 function Admin() {
+
+
+  
   const [user, setUser] = useState<any>({
     user: "",
   });
@@ -54,9 +57,8 @@ function Admin() {
       return;
     }
     try {
-      const decoded = jwtDecode(token);
-      const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
-      console.log(role)
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      // const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
       const userId =
         decoded[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
@@ -187,13 +189,14 @@ function Admin() {
           {user?.name && <div>Hello {user.name}</div>}
         </motion.div>
       </div>
-
+    <div className="flex justify-center text-center">
       <button
         className="bg-blue-500 text-white rounded-lg p-2 font-bold hover:bg-blue-700"
         onClick={handleOpenModal}
       >
         Autók hozzáadása a rendszerbe
       </button>
+    </div>
       <Modal
         open={openCarModal}
         onClose={handleCloseModal}

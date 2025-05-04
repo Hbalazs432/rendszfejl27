@@ -16,6 +16,8 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
   const [endDate, setEndDate] = useState<Date | null>(null);
   
 
+  
+
   useEffect(() => {
     const getCars = async () => {
       const response = await fetch("https://localhost:7175/api/Cars/list-available-cars", {
@@ -115,11 +117,26 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
                 <p className="mb-3 font-normal text-gray-700 ">
                   Ár: {car.price}/nap
                 </p>
+
                 <p className="mb-3 font-normal text-gray-700 ">
                   Km: {car.distance}
                 </p>
+
+                <p className="mb-3 font-normal text-gray-700 ">
+                  Fogyasztás: {car.consumption} liter
+                  </p>
+                <p className="mb-3 font-normal text-gray-700 "> 
+                  Űrtartalom: {car.capacity} liter
+                </p>
+                <p className="mb-3 font-normal text-gray-700 "> 
+                  Motor: {car.engine}
+                </p>
                 <p className="mb-3 font-normal text-gray-700 ">
                   Ülések: {car.seats}
+                </p>
+                {/* //TODO  Carcategory fix*/}
+                <p className="mb-3 font-normal text-gray-700 ">
+                  Kategória: {car.carCategory.Id} 
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
                   Státusz: {(car.status === "Available" ? "Elérhető" : "Nem elérhető")}

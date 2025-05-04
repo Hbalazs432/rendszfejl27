@@ -3,9 +3,7 @@ import { motion } from "framer-motion";
 import { Car, User, CarsProps } from '../interfaces/interfaces';
 import { containerVariants, itemVariants } from '../styles/styles';
 import AdminCarModal from './AdminCarModal';
-import { toast } from "react-toastify";
-
-
+import ModifyCarModal from './ModifyCarModal';
 
 
 //TODO törlésnél is frissuljon
@@ -13,10 +11,10 @@ function AdminCars({ refreshKey }: { refreshKey: number }) {
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [modal, setModal] = useState(false);  
+  const [modalModifyCar, setModifyCar] = useState(false);  
+
+
   
-
-
-  useEffect(() => {
     const getCars = async () => {
       const response = await fetch("https://localhost:7175/api/Cars/list-available-cars", {
         method: "GET",
@@ -28,11 +26,18 @@ function AdminCars({ refreshKey }: { refreshKey: number }) {
       const cars = await response.json();
       setCars(cars);
       console.log(cars);
-    };
-    getCars();
-  }, [refreshKey]); 
+    }
 
-const handleCloseModal = () => {
+
+    useEffect(() => {
+      getCars();
+    }, [refreshKey]);
+
+const handleCloseModifyCar = () =>{
+  setModifyCar(false)
+}
+
+const handleCloseDeleteCar = () => {
     setModal(false);
   };
 
@@ -95,7 +100,7 @@ const handleCloseModal = () => {
               </div>
               <div className='flex gap-2'>
                 <button
-                  onClick={() => {setSelectedCar(car)}}
+                  onClick={() => {setSelectedCar(car), setModifyCar(true)}}
                   className="w-full my-5 px-3 py-2 text-bold font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 transition-all hover:scale-105"
                 >
                   Módosítás
@@ -112,7 +117,8 @@ const handleCloseModal = () => {
         </motion.div>
       ))}
     </motion.div>
-    <AdminCarModal deleteCar={selectedCar} open={modal} handleClose={handleCloseModal}/>
+    <ModifyCarModal modifyCar={selectedCar} open={modalModifyCar} handleClose={handleCloseModifyCar} refreshCars={getCars}/>
+    <AdminCarModal deleteCar={selectedCar} open={modal} handleClose={handleCloseDeleteCar} refreshCars={getCars}/> 
     </div>
   )
 }
