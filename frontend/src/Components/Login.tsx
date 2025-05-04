@@ -50,6 +50,11 @@ function Login() {
           navigate('/admin', {state: {user: token}})
           toast.success("Sikeres bejelentkezés!");
         }
+        else if(role === "Clerk")
+          {
+            navigate('/clerk', {state: {user: token}})
+            toast.success("Sikeres bejelentkezés!");
+          }
       }
       else{
         toast.error("Hibás email cím vagy jelszó!");

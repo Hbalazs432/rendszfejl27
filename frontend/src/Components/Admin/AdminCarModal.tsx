@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { style } from "../styles/styles";
-import { Car } from "../interfaces/interfaces";
+import { style } from "../../styles/styles";
+import { Car } from "../../interfaces/interfaces";
 import { toast } from "react-toastify";
 
 function AdminCarModal({

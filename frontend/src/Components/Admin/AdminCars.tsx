@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from "framer-motion";
-import { Car, User, CarsProps } from '../interfaces/interfaces';
-import { containerVariants, itemVariants } from '../styles/styles';
+import { Car, User, CarsProps } from '../../interfaces/interfaces';
+import { containerVariants, itemVariants } from '../../styles/styles';
 import AdminCarModal from './AdminCarModal';
-import ModifyCarModal from './ModifyCarModal';
+import ModifyCarModal from '../ModifyCarModal';
 
 
 //TODO törlésnél is frissuljon

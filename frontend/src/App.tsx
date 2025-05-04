@@ -4,7 +4,7 @@ import Registration from './Components/Registration'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import User from './Components/User';
-import Admin from './Components/Admin';
+import Admin from './Components/Admin/Admin';
 import { ToastContainer, toast } from 'react-toastify';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -12,7 +12,8 @@ import Datepicker from './Components/DatePicker';
 import {SkeletonTheme} from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import ProtectedRoute  from './Components/ProtectedRoute';
-import Cars from './Components/Cars';
+import Clerk from './Components/Clerk/Clerk';
+
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/registration" element={<><Datepicker/><Registration /></>} />
         <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
         <Route path="/user" element={<ProtectedRoute><User/></ProtectedRoute>} />
+        <Route path="/clerk" element={<ProtectedRoute><Clerk/></ProtectedRoute>} />
       </Routes>
     </Router>
       <ToastContainer position='bottom-center' theme='dark'/>

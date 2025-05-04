@@ -58,7 +58,7 @@ function Registration() {
         setPostalCode("");
         console.log("Felhasználó hozzáadva", data);
         toast.success("Sikeres regisztráció");
-        navigate("/login");
+        navigate("/");
       })
       .catch((error) => {
         console.log("Hiba történt", error);

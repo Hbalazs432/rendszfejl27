@@ -6,15 +6,15 @@ import Fade from "@mui/material/Fade";
 import { MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { toast } from "react-toastify";
-import { containerVariants, itemVariants, style } from "../styles/styles";
-import { CarData } from "../interfaces/interfaces";
+import { containerVariants, itemVariants, style } from "../../styles/styles";
+import { CarData } from "../../interfaces/interfaces";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { jwtDecode } from "jwt-decode";
 import { SelectChangeEvent } from "@mui/material";
 import AdminCars from "./AdminCars";
-import { CustomJwtPayload } from "../interfaces/interfaces";
+import { CustomJwtPayload } from "../../interfaces/interfaces";
 
 
 // TODO CAR MODIFY 
