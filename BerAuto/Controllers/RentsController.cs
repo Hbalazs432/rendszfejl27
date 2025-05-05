@@ -65,6 +65,21 @@ namespace BerAuto.Controllers
             }
         }
 
+        [HttpPut("finish-rent/{orderId}")]
+        [Authorize(Roles = "Clerk")]
+        public async Task<IActionResult> Finish(int orderId)
+        {
+            try
+            {
+                var result = await _rentService.FinishRentAsync(orderId);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
         [HttpGet("previous-rents")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ListPreviousRents()

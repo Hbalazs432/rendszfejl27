@@ -40,7 +40,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
         };
     });
 
-
 // AutoMapper Config
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
@@ -70,6 +69,8 @@ builder.Services.AddSwaggerGen(c =>
         new string[] { }
     }});
 });
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<EmailService>();
 
 var app = builder.Build();
 

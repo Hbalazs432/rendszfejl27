@@ -10,7 +10,8 @@ namespace BerAuto.DataContext.Entities
     {
         Pending,
         Accepted,
-        Finished
+        Finished,
+        Denied
     }
     public class Rent
     {

@@ -15,6 +15,7 @@ namespace BerAuto.Services
     {
         Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId);
         Task<bool> AcceptRentAsync(int rentId);
+        Task<bool> FinishRentAsync(int rentId);
         Task<IList<RentDto>> GetPreviousRents(int userId);
         Task<IList<RentDto>> GetAcceptedRents();
         Task<IList<RentDto>> GetFinishedRents();
@@ -25,11 +26,13 @@ namespace BerAuto.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly EmailService _emailService;
 
-        public RentService(AppDbContext context, IMapper mapper)
+        public RentService(AppDbContext context, IMapper mapper, EmailService emailService)
         {
             _context = context;
             _mapper = mapper;
+            _emailService = emailService;
         }
         public async Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId)
         {
@@ -55,12 +58,54 @@ namespace BerAuto.Services
 
         public async Task<bool> AcceptRentAsync(int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == 0);
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var acceptedRent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == RentStatus.Pending);
+                if (acceptedRent is null)
+                {
+                    throw new Exception($"No rent found with id: {rentId} or status is not pending");
+                }
+                acceptedRent.RentStatus = RentStatus.Accepted;
+
+                var deniedRents = await _context.Rents.Where(r => r.CarId == acceptedRent.CarId &&
+                                                                r.RentStatus == RentStatus.Pending &&
+                                                                r.StartDate <= acceptedRent.EndDate &&
+                                                                r.EndDate >= acceptedRent.StartDate &&
+                                                                r.Id != rentId).ToListAsync();
+                foreach (var rent in deniedRents)
+                {
+                    rent.RentStatus = RentStatus.Denied;
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                await _emailService.SendAcceptedEmailAsync(
+                    acceptedRent.Email,
+                    acceptedRent.Car.Brand,
+                    acceptedRent.Car.Model,
+                    acceptedRent.StartDate,
+                    acceptedRent.EndDate
+                    );
+
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task<bool> FinishRentAsync(int rentId)
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == RentStatus.Accepted);
             if (rent is null)
             {
-                throw new Exception($"No rent found with id: {rentId} or status is not pending");
+                throw new Exception($"No rent found with id: {rentId} or status is not accepted");
             }
-            rent.RentStatus = RentStatus.Accepted;
+            rent.RentStatus = RentStatus.Finished;
             _context.Rents.Update(rent);
             var result = await _context.SaveChangesAsync();
             return result > 0;
