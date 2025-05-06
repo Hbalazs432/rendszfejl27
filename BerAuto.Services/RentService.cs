@@ -77,17 +77,31 @@ namespace BerAuto.Services
                 foreach (var rent in deniedRents)
                 {
                     rent.RentStatus = RentStatus.Denied;
+                    await _emailService.SendEmailAsync(rent.Email,
+                        "Bérlési igény elutasítva", $@"
+                        Tisztelt Uram / Hölgyem! 
+
+                        Bérlési igényét sajnos el kellett utasítanunk időpontütközés miatt.
+
+                        BérAutó");
                 }
+
+                var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == acceptedRent.CarId);
+                await _emailService.SendEmailAsync( acceptedRent.Email,
+                    "Bérlési igény elfogadva", $@"
+                    Tisztelt Uram / Hölgyem! 
+
+                    Elfogadtuk az autóbérlési igényét.
+
+                    Részletek:
+                    -Autó: {car.Brand} {car.Model}
+                    -Bérlés kezdete: {acceptedRent.StartDate: yyyy - MM - dd}
+                    -Bérlés vége: {acceptedRent.EndDate: yyyy - MM - dd}
+
+                    BérAutó");
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                await _emailService.SendAcceptedEmailAsync(
-                    acceptedRent.Email,
-                    acceptedRent.Car.Brand,
-                    acceptedRent.Car.Model,
-                    acceptedRent.StartDate,
-                    acceptedRent.EndDate
-                    );
 
                 return true;
             }

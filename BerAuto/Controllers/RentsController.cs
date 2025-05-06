@@ -40,7 +40,6 @@ namespace BerAuto.Controllers
         {
             try
             {
-                var userId = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
                 var res = await _rentService.CreateRentAsync(rentCreateDto, null);
                 return Ok(res);
             }
