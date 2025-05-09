@@ -3,7 +3,6 @@ import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
@@ -103,28 +102,32 @@ useEffect(() =>{
   // Cím adatok eltávolítása az id-ről
   try {
     const token = localStorage.getItem("token");
-
-
-    //TODO FIX 
-
-
-
-
+    console.log(tempData)
+  
     // // Cím mentése
-    // const addressResponse = await fetch("https://localhost:7175/api/Users/update-address", {
-    //   method: "PUT",
-    //   headers: { 
-    //     "Content-Type": "application/json",  
-    //     Authorization: `Bearer ${token}`
-    //   },
-    //   body: JSON.stringify({ address: addresswithoutid }),
-    // });
+    const addressResponse = await fetch("https://localhost:7175/api/Users/update-address", {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json",  
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        city: tempData.address.city,
+        street: tempData.address.street,
+        postalCode: tempData.address.postalCode
+      })
+    });
 
-    // if (!addressResponse.ok) {
-    //   const error = await addressResponse.json();
-    //   console.error("Cím hiba:", error);
-    //   throw new Error("Hiba történt a cím mentésekor");
-    // }
+    if (!addressResponse.ok) {
+      const error = await addressResponse.json();
+      // console.log("Küldött címadatok:", {
+      //   city: tempData.address.city,
+      //   street: tempData.address.street,
+      //   postalCode: tempData.address.postalCode
+      // });
+      console.error("Cím hiba:", error);
+      throw new Error("Hiba történt a cím mentésekor");
+    }
 
     // Telefonszám mentése
     const phoneResponse = await fetch("https://localhost:7175/api/Users/update-phone", {
@@ -142,12 +145,14 @@ useEffect(() =>{
     }
 
     const updatedUser = await phoneResponse.json();
-    setUser(updatedUser);
-    setTempData(updatedUser);
+    const mergedUser = {
+      ...updatedUser,
+      address: tempData.address 
+    };
+    setUser(mergedUser);
+    setTempData(mergedUser);
     setEditing(false);
     toast.success("Sikeres adatmódosítás!");
-    console.log("Mentve:", updatedUser);
-
   } catch (error) {
     console.log("Hiba történt:", error);
     toast.error("Hiba történt a mentés során");
@@ -208,14 +213,16 @@ useEffect(() =>{
               ? "bg-yellow-500 p-2 rounded-lg"
               : rent.rentStatus === "Accepted"
               ? "bg-green-600 p-2 rounded-lg"
-              : "bg-red-500 p-2 rounded-lg"
+               : rent.rentStatus === "Denied"
+              ? "bg-red-500 p-2 rounded-lg" : ""
           }
         >
           {rent.rentStatus === "Pending"
             ? "ügyintézés alatt"
             : rent.rentStatus === "Accepted"
             ? "elfogadva"
-            : "elutasítva"}
+            : rent.rentStatus === "Denied"
+            ? "elutasítva" : ""}
         </p>
       </div>
     </div>
@@ -238,18 +245,19 @@ useEffect(() =>{
           <label className="text-center my-3 text-xl font-bold">
             Személyes adatok
           </label>
+          <div className="flex-col flex space-y-2">
           {editing ? (
             <input
               type="text"
               name="phone"
               value={tempData.phone}
               onChange={handleChange}
-              className="bg-slate-400 outline-none p-1"
+              className="bg-blue-600 rounded-lg outline-none p-1"
             />
           ) : (
             <>
             <div>
-            phone number: {user.phone}
+            Telefonszám: {user.phone}
                </div>
                </>
           )}
@@ -259,10 +267,10 @@ useEffect(() =>{
               name="street"
               value={tempData.address?.street}
               onChange={handleChange}
-              className="bg-slate-400  outline-none p-1"
+              className="bg-blue-600 rounded-lg outline-none p-1"
             />
           ) : (
-            <div>address street: {user.address?.street}</div>
+            <div>Utca: {user.address?.street}</div>
           )}
           {editing ? (
             <input
@@ -270,10 +278,10 @@ useEffect(() =>{
               name="city"
               value={tempData.address?.city}
               onChange={handleChange}
-              className="bg-slate-400  outline-none p-1"
+              className="bg-blue-600 rounded-lg outline-none p-1"
             />
           ) : (
-            <div>address city: {user.address?.city}</div>
+            <div>Város: {user.address?.city}</div>
           )}
           {editing ? (
             <input
@@ -281,10 +289,10 @@ useEffect(() =>{
               name="postalCode"
               value={tempData.address?.postalCode}
               onChange={handleChange}
-              className="bg-slate-400  outline-none p-1"
+              className="bg-blue-600 rounded-lg outline-none p-1"
             />
           ) : (
-            <div>Postal Code: {user.address?.postalCode}</div>
+            <div>Irányítószám: {user.address?.postalCode}</div>
           )}
           {editing ? (
             <button
@@ -304,6 +312,7 @@ useEffect(() =>{
               Módosítás
             </button>
           )}
+          </div>        
         </motion.div>
   </div>
   <Cars  user={user} onRefresh={() => setRefreshKey(prev => prev + 1)}/>
