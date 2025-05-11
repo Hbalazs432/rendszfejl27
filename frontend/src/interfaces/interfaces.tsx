@@ -34,8 +34,8 @@ export interface Car {
   capacity: number;
   carCategoryId: number,
   carCategory:{
-    Id: number,
-    Name: string
+    id: number,
+    name: string
   }
   engine: string;
   price: number;

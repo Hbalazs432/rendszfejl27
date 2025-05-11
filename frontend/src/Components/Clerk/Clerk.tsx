@@ -17,6 +17,7 @@ function Clerk() {
   });
   const [pendingRents, setPendingRents] = useState<Rents[]>([]);
   const [acceptedRents, setAcceptedRents] = useState<Rents[]>([]);
+  const [finishedRents, setFinishedRents] = useState<Rents[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedOption, setselectedOption] = useState("");
 
@@ -101,8 +102,22 @@ function Clerk() {
         console.log(error);
       }
     };
+    const finishedRents = async () =>{
+      try{
+        const response = await fetch(`https://localhost:7175/api/Rents/finished-rents`,{
+            method:'GET',
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+        })
+        const finished = await response.json()
+        setFinishedRents(finished);
+        console.log(finished)
+      }catch(error){console.log(error)}
+    }
     loadAcceptRents();
     loadPendingRents();
+    finishedRents();
   }, [refreshKey]);
 
   //HALFWAY
@@ -164,7 +179,9 @@ function Clerk() {
             onChange={handleChange}
           >
             <MenuItem value="pendingRents">Függő bérlések</MenuItem>
-            <MenuItem value="acceptedRents">Elfogadások</MenuItem>
+            <MenuItem value="deniedRents">Elutasított bérlések</MenuItem>
+            <MenuItem value="acceptedRents">Jóváhagyott bérlések</MenuItem>
+            <MenuItem value="finishedRents">Lejárt bérlések</MenuItem>
           </Select>
         </FormControl>
              </div>
@@ -183,6 +200,9 @@ function Clerk() {
                   className="border rounded-lg p-4 shadow-sm hover:shadow-gray-300 transition bg-gray-200"
                 >
                   <div className="space-y-5">
+                    <p className="text-gray-700 font-medium">
+                      Igénylő: <span className="font-bold">{pending.email}</span>
+                    </p>
                     <p className="text-gray-700 font-medium">
                       Id: <span className="font-bold">{pending.id}</span>
                     </p>
@@ -219,11 +239,11 @@ function Clerk() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : selectedOption === "acceptedRents" ? (
         <div className="flex justify-center items-center min-h-screen">
           <div className="bg-white border-2 border-gray-300 rounded-xl shadow-lg p-8 w-full max-w-md">
             <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
-              Elfogadások
+             Jóváhagyott bérlések 
             </h2>
             <div className="space-y-4">
               {acceptedRents.map((accepted, index) => (
@@ -232,6 +252,9 @@ function Clerk() {
                   className="border rounded-lg p-4 shadow-sm hover:shadow-gray-300 transition bg-gray-200"
                 >
                   <div className="space-y-5">
+                    <p className="text-gray-700 font-medium">
+                      Igénylő: <span className="font-bold">{accepted.email}</span>
+                    </p>
                     <p className="text-gray-700 font-medium">
                       Id: <span className="font-bold">{accepted.id}</span>
                     </p>
@@ -257,7 +280,51 @@ function Clerk() {
             </div>
           </div>
         </div>
-      )}
+      ) : selectedOption === "finishedRents" ? (
+          <div className="flex justify-center items-center min-h-screen">
+          <div className="bg-white border-2 border-gray-300 rounded-xl shadow-lg p-8 w-full max-w-md">
+            <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
+              Lejárt bérlések
+            </h2>
+            <div className="space-y-4">
+              {finishedRents.map((finished, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 shadow-sm hover:shadow-gray-300 transition bg-gray-200"
+                >
+                  <div className="space-y-5">
+                    <p className="text-gray-700 font-medium">
+                      Igénylő: <span className="font-bold">{finished.email}</span>
+                    </p>
+                    <p className="text-gray-700 font-medium">
+                      Id: <span className="font-bold">{finished.id}</span>
+                    </p>
+                    <p className="text-gray-700 font-medium">
+                      Kezdés dátuma:{" "}
+                      <span className="font-bold">{finished.startDate}</span>
+                    </p>
+                    <p className="text-gray-700 font-medium">
+                      Befejezés dátuma:{" "}
+                      <span className="font-bold">{finished.endDate}</span>
+                    </p>
+                    <p className="text-gray-600">
+                      Státusz:{" "}
+                      <span className="font-semibold bg-green-500 text-white p-2 mt-2 rounded-lg">
+                        {finished.rentStatus === "Accepted"
+                          ? "Elfogadva"
+                          : "Lejárt"}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : selectedOption === "deniedRents" ? (
+        <div>Denied</div>
+      )
+       : ""}
     </div>
   );
 }

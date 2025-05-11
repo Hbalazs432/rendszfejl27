@@ -160,6 +160,21 @@ function Admin() {
       }
       toast.success("Sikeres hozzáadás.")
       setRefreshKey(prev => prev + 1);
+      setaddedCar({
+      licensePlateNumber: "",
+      brand: "",
+      model: "",
+      yearOfManufacture: 0,
+      seats: 0,
+      transmission: "",
+      distance: 0,
+      consumption: 0,
+      capacity: 0,
+      carCategoryId: 0,
+      engine: "",
+      price: 0
+    })
+      handleCloseModal()
       } catch (error) {
         console.error("Hiba történt:", error);
         toast.error("Hiba a feltöltés során");
@@ -191,7 +206,7 @@ function Admin() {
       </div>
     <div className="flex justify-center text-center">
       <button
-        className="bg-blue-500 text-white rounded-lg p-2 font-bold hover:bg-blue-700"
+        className="bg-blue-500 text-white rounded-lg p-2 font-bold hover:bg-blue-700 m-7"
         onClick={handleOpenModal}
       >
         Autók hozzáadása a rendszerbe

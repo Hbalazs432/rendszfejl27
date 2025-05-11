@@ -3,7 +3,6 @@ import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Dayjs } from "dayjs";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 import {jwtDecode} from "jwt-decode";
@@ -68,7 +67,7 @@ useEffect(() =>{
   
         if (response.ok) {
           const showHistoryCars = await response.json();
-          sethistoryCars(showHistoryCars); 
+          sethistoryCars(showHistoryCars);
         } else {
           console.error("Nem sikerült lekérni az autók történetét:", response.status);
         }

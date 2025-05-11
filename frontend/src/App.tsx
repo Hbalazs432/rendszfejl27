@@ -13,7 +13,7 @@ import {SkeletonTheme} from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import ProtectedRoute  from './Components/ProtectedRoute';
 import Clerk from './Components/Clerk/Clerk';
-
+import RentAnonym from './Components/RentAnonym';
 
 
 function App() {
@@ -23,8 +23,8 @@ function App() {
       <SkeletonTheme baseColor='#313131' highlightColor='#525252'>
     <Router>
       <Routes>
-        <Route path="/"  element={<><Datepicker/><Login/></>} />
-        <Route path="/registration" element={<><Datepicker/><Registration /></>} />
+        <Route path="/"  element={<><RentAnonym/><Login/></>} />
+        <Route path="/registration" element={<><RentAnonym/><Registration /></>} />
         <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
         <Route path="/user" element={<ProtectedRoute><User/></ProtectedRoute>} />
         <Route path="/clerk" element={<ProtectedRoute><Clerk/></ProtectedRoute>} />

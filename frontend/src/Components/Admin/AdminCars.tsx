@@ -13,6 +13,18 @@ function AdminCars({ refreshKey }: { refreshKey: number }) {
   const [modal, setModal] = useState(false);  
   const [modalModifyCar, setModifyCar] = useState(false);  
 
+  const carCategories: { [key: number]: string } = {
+    1: "Személyautó",
+    4: "Sedan",
+    5: "Kombi",
+    6: "Hatchback",
+    7: "SUV",
+    8: "Crossover",
+    9: "Kupé",
+    10: "Cabrio",
+    11: "MPV / Egyterű",
+    12: "Pickup",
+  };
 
   
     const getCars = async () => {
@@ -89,10 +101,12 @@ const handleCloseDeleteCar = () => {
                   Férőhelyek: {car.capacity}
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
-                  Kategória: {car.carCategoryId}
-                </p>
+                Kategória: {car.carCategory?.id && carCategories[car.carCategory.id] 
+                  ? carCategories[car.carCategory.id] 
+                  : "Ismeretlen"}
+              </p>
                 <p className="mb-3 font-normal text-gray-700 ">
-                  Motor: {car.engine === "Electric" ? "Elektromos" : "Diesel"}
+                  Motor: {car.engine === "Electronic" ? "Elektromos" : "Diesel"}
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
                   Státusz: {(car.status === "Available" ? "Elérhető" : "Nem elérhető")}

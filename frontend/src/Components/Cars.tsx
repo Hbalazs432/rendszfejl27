@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Car, User, CarsProps } from '../interfaces/interfaces';
+import { Car, User} from '../interfaces/interfaces';
 import { motion } from "framer-motion";
 import { containerVariants, itemVariants } from '../styles/styles';
 import CarModal from './CarModal';
@@ -15,7 +15,18 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   
-
+ const carCategories = {
+    1:	"Személyautó",
+    4:	"Sedan",
+    5:	"Kombi",
+    6:	"Hatchback",
+    7:	"SUV",
+    8:	"Crossover",
+    9:	"Kupé",
+    10:	"Cabrio",
+    11:	"MPV / Egyterű",
+    12:	"Pickup"
+ }
   
 
   useEffect(() => {
@@ -29,7 +40,7 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
       });
       const cars = await response.json();
       setCars(cars);
-      console.log(cars);
+      console.log(cars.status);
     };
     getCars();
   }, []); 
@@ -136,10 +147,10 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
                 </p>
                 {/* //TODO  Carcategory fix*/}
                 <p className="mb-3 font-normal text-gray-700 ">
-                  Kategória: {car.carCategory.Id} 
+                  Kategória: {car.carCategoryId} 
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
-                  Státusz: {(car.status === "Available" ? "Elérhető" : "Nem elérhető")}
+                  Státusz: {(car.status === "Available" ? "Elérhető" : car.status === "Rented" ? "Nem elérhető" : "Hiba")}
                 </p>
               </div>
               <button

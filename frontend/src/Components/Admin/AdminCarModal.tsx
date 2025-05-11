@@ -40,6 +40,7 @@ function AdminCarModal({
       if (response.ok) {
         toast.success("Sikeresen törölted az autót.");
         refreshCars()
+        handleClose()
       } else toast.error("Nem tudod törölni mert le van foglalava az autó");
     } catch (error) {
       console.log(error);

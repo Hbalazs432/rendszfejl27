@@ -4,7 +4,7 @@ import { Car, User, CarsProps } from '../interfaces/interfaces';
 import { style } from "../styles/styles";
 import {toast} from 'react-toastify'
 import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
+import Modal, { ModalRoot } from "@mui/material/Modal";
 
 function ModifyCarModal({
     modifyCar,
@@ -60,6 +60,7 @@ function ModifyCarModal({
         }
   
         toast.success("Sikeres frissítés!");
+        console.log(modifyCar)
         refreshCars();
         handleClose();
       } catch (err) {
@@ -154,6 +155,9 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="fogyasztás"
             />
+
+
+            {/*carcategory fix */}
             <input
               name="carCategoryId"
               type="number"
@@ -168,7 +172,7 @@ function ModifyCarModal({
               onChange={handleChange}
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
             >
-              <option value="Electric">Elektromos</option>
+              <option value="Electronic">Elektromos</option>
               <option value="Diesel">Dízel</option>
             </select>
             {/* <input
