@@ -14,7 +14,7 @@ namespace BerAuto.Controllers
     {
         private readonly IRentService _rentService;
 
-        public RentsController(IRentService rentService) 
+        public RentsController(IRentService rentService)
         {
             _rentService = rentService;
         }
@@ -31,7 +31,7 @@ namespace BerAuto.Controllers
             catch (Exception exc)
             {
                 return BadRequest(exc.Message);
-            }  
+            }
         }
 
         [HttpPost("anonym")]
@@ -93,7 +93,7 @@ namespace BerAuto.Controllers
             {
                 return BadRequest(exc.Message);
             }
-            
+
         }
 
         [HttpGet("accepted-rents")]
@@ -134,6 +134,21 @@ namespace BerAuto.Controllers
             {
                 var result = await _rentService.GetPendingRents();
                 return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
+        [HttpPut("send-invoice/{orderId}")]
+        [Authorize(Roles = "Clerk")]
+        public async Task<IActionResult> SendInvoice(int orderId)
+        {
+            try
+            {
+                var result = await _rentService.SendInvoiceAsync(orderId);
+                return Ok();
             }
             catch (Exception exc)
             {

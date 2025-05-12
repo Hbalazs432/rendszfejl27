@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentService, RentService>();
-
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
     AddJwtBearer(options =>
@@ -71,6 +71,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<EmailService>();
+builder.Services.AddTransient<BillingService>();
+QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 

@@ -27,7 +27,8 @@ namespace BerAuto.Services
             _settings = options.Value;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        public async Task SendEmailAsync(string toEmail, string subject, string body, 
+            byte[]? attachment, string? attachmentName)
         {
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress("BérAutó", _settings.From));
@@ -36,6 +37,18 @@ namespace BerAuto.Services
             email.Body = new TextPart("plain")
             {
                 Text = body};
+
+            var builder = new BodyBuilder
+            {
+                TextBody = body
+            };
+
+            if (attachment != null && attachment.Length > 0)
+            {
+                builder.Attachments.Add(attachmentName, attachment, new ContentType("application", "pdf"));
+            }
+
+            email.Body = builder.ToMessageBody();
 
             using var smtp = new SmtpClient();
             try

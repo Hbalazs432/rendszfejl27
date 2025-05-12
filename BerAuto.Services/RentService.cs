@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.ConstrainedExecution;
 
 namespace BerAuto.Services
 {
@@ -20,6 +21,7 @@ namespace BerAuto.Services
         Task<IList<RentDto>> GetAcceptedRents();
         Task<IList<RentDto>> GetFinishedRents();
         Task<IList<RentDto>> GetPendingRents();
+        Task<bool> SendInvoiceAsync(int rentId);
     }
 
     public class RentService : IRentService
@@ -27,12 +29,14 @@ namespace BerAuto.Services
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly EmailService _emailService;
+        private readonly BillingService _billingService;
 
-        public RentService(AppDbContext context, IMapper mapper, EmailService emailService)
+        public RentService(AppDbContext context, IMapper mapper, EmailService emailService, BillingService billingService)
         {
             _context = context;
             _mapper = mapper;
             _emailService = emailService;
+            _billingService = billingService;
         }
         public async Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId)
         {
@@ -83,7 +87,7 @@ namespace BerAuto.Services
 
                         Bérlési igényét sajnos el kellett utasítanunk időpontütközés miatt.
 
-                        BérAutó");
+                        BérAutó", null, null);
                 }
 
                 var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == acceptedRent.CarId);
@@ -95,10 +99,10 @@ namespace BerAuto.Services
 
                     Részletek:
                     -Autó: {car.Brand} {car.Model}
-                    -Bérlés kezdete: {acceptedRent.StartDate: yyyy - MM - dd}
-                    -Bérlés vége: {acceptedRent.EndDate: yyyy - MM - dd}
+                    -Bérlés kezdete: {acceptedRent.StartDate: yyyy-MM-dd}
+                    -Bérlés vége: {acceptedRent.EndDate: yyyy-MM-dd}
 
-                    BérAutó");
+                    BérAutó", null, null);
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -147,6 +151,53 @@ namespace BerAuto.Services
         {
             var rents = await _context.Rents.Where(r => r.RentStatus == RentStatus.Pending).ToListAsync();
             return _mapper.Map<IList<RentDto>>(rents);
+        }
+
+        public async Task<bool> SendInvoiceAsync(int rentId)
+        {
+            var finishedRent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == RentStatus.Finished);
+            if (finishedRent is null)
+            {
+                throw new Exception($"No rent found with id: {rentId} or status is not finished");
+            }
+
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == finishedRent.CarId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == finishedRent.UserId);
+            string name;
+
+            if ( user == null ) { name = "name"; }
+                else { name = user.Name; }
+
+            int days = (finishedRent.EndDate.ToDateTime(TimeOnly.MinValue) -
+            finishedRent.StartDate.ToDateTime(TimeOnly.MinValue)).Days;
+            double amount = days * car.Price;
+
+            var invoice = new InvoiceDto
+                {
+                    RentId = rentId,
+                    CustomerName = name,
+                    Car = car.Brand + " " + car.Model,
+                    StartDate = finishedRent.StartDate,
+                    EndDate = finishedRent.EndDate,
+                    InvStartDate = DateOnly.FromDateTime(DateTime.Today),
+                    InvEndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5)),
+                    Days = days,
+                    Price = car.Price,
+                    TotalAmount = amount
+                };
+
+            var pdfBytes = _billingService.GenerateInvoicePdf(invoice);
+
+            await _emailService.SendEmailAsync(finishedRent.Email,
+                    "Számlája érkezett", $@"
+                    Tisztelt Uram / Hölgyem! 
+
+                    Csatolva küldjük a számláját az autóbérlésről.
+
+                    BérAutó", pdfBytes, "invoice.pdf");
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
