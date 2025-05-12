@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
@@ -8,6 +8,7 @@ import {faArrowRightFromBracket} from '@fortawesome/free-solid-svg-icons'
 import {jwtDecode} from "jwt-decode";
 import Cars from "./Cars";
 import { Car, Rents  } from "../interfaces/interfaces";
+import { carCategories } from "../utils/carCategories";
 
 
 function User() {
@@ -58,7 +59,8 @@ useEffect(() =>{
     const token = localStorage.getItem("token");
     if (!token) return;
       
-        const response = await fetch(`https://localhost:7175/api/Rents/user-rents`, {
+        const userId = user.id;
+        const response = await fetch(`https://localhost:7175/api/Rents/user-rents/${userId}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -95,7 +97,6 @@ useEffect(() =>{
         }));
       }
     };
-
 
  const handleSave = async () => {
   // Cím adatok eltávolítása az id-ről
@@ -174,6 +175,9 @@ useEffect(() =>{
     <button className="text-sm bg-blue-500 rounded-lg p-5" onClick={handleLogout}>
       <FontAwesomeIcon icon={faArrowRightFromBracket} />
     </button>
+
+
+
     <motion.div
       initial={{ scale: 0 }}
       animate={{ scale: 1, transition: { duration: 0.5 } }}
@@ -184,7 +188,7 @@ useEffect(() =>{
   </div>
 
   <div className="flex text-white font-semibold m-5">
-    <motion.div
+     <motion.div
       initial={{ scale: 0 }}
       animate={{ scale: 1, transition: { duration: 1.5 } }}
     >
@@ -234,7 +238,6 @@ useEffect(() =>{
         </div>
       </div>
     </motion.div>
-
     {/*Adatok*/}
     <motion.div
           initial={{ scale: 0 }}

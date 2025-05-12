@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { style, scrollModal } from "../styles/styles";
 import { Car } from '../interfaces/interfaces';
+import { carCategories } from '../utils/carCategories';
 
 function RentAnonym() {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
@@ -17,6 +18,11 @@ function RentAnonym() {
   const [openRentCar, setOpenRentCar] = useState(false)
   const [selectedCar, setSelectedCar] = useState<number>(0)
   const [email, setEmail] = useState("")
+ 
+  
+
+
+  
 
   const handleStartDateChange = (start: Dayjs | null) => {
     setStartDate(start);
@@ -37,20 +43,7 @@ function RentAnonym() {
     setModal(false);
   };
 
-
-const carCategories: { [key: number]: string } = {
-  1: "Személyautó",
-  4: "Sedan",
-  5: "Kombi",
-  6: "Hatchback",
-  7: "SUV",
-  8: "Crossover",
-  9: "Kupé",
-  10: "Cabrio",
-  11: "MPV / Egyterű",
-  12: "Pickup",
-};
-
+  //autok lekerese
   useEffect(() => {
     const getCars = async () => {
       const response = await fetch("https://localhost:7175/api/Cars/list-available-cars", {
@@ -64,9 +57,11 @@ const carCategories: { [key: number]: string } = {
       console.log(cars);
     };
     getCars();
-  }, []); 
+  }, []);
+  
+  
 
-
+// idot valasszon
  const handleRentAnonym = async () => {
     try{
         if(!startDate != null && endDate != null)
@@ -76,16 +71,15 @@ const carCategories: { [key: number]: string } = {
     }catch(error)
     {console.log(error)}
 }
-
+//auto kivalasztasa
 const handleRentCar = async (carId : number) =>{
   setOpenRentCar(true)
-  console.log(carId)  
   setSelectedCar(carId)
 }
 
-const handleFinalRent = async () =>{
 
-  console.log(email, startDate, endDate, selectedCar)
+//vegso rent
+const handleFinalRent = async () =>{ 
   try{
   const response = await fetch(`https://localhost:7175/api/Rents/anonym`,{
     method: 'POST',
@@ -194,10 +188,9 @@ const handleFinalRent = async () =>{
                     <p className="mb-3 font-normal text-gray-700 ">
                     Ülések: {car.seats}
                     </p>
-                    {/* //TODO  Carcategory fix*/}
                    <p className="mb-3 font-normal text-gray-700 ">
-                    Kategória: {car.carCategory?.id && carCategories[car.carCategory.id] 
-                        ? carCategories[car.carCategory.id] 
+                    Kategória: {car.carCategoryId && carCategories[car.carCategoryId] 
+                        ? carCategories[car.carCategoryId] 
                         : "Ismeretlen"}
                     </p> 
                     <p className="mb-3 font-normal text-gray-700 ">

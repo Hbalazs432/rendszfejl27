@@ -5,7 +5,7 @@ import { style } from "../../styles/styles";
 import { Car } from "../../interfaces/interfaces";
 import { toast } from "react-toastify";
 
-function AdminCarModal({
+function DeleteCarModal({
   deleteCar,
   open,
   handleClose,
@@ -26,7 +26,6 @@ function AdminCarModal({
         toast.error("Nincs ilyen autó ezzel az id-vel");
       }
       const carId = deleteCar?.id;
-      console.log(carId);
       const token = localStorage.getItem("token");
       const response = await fetch(
         `https://localhost:7175/api/Cars/delete-car/${carId}`,
@@ -84,4 +83,4 @@ function AdminCarModal({
   );
 }
 
-export default AdminCarModal;
+export default DeleteCarModal;

@@ -33,17 +33,17 @@ export interface Car {
   consumption: number;
   capacity: number;
   carCategoryId: number,
-  carCategory:{
-    id: number,
-    name: string
-  }
+  // carCategory:{
+  //   id: number,
+  //   name: string
+  // }
   engine: string;
   price: number;
   status: string;
 }
 export interface Rents{
   car: Car;
-  id: string;
+  id: number;
   rentStatus: string;
   carId: number;
   startDate: string;

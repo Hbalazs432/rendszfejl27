@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { motion } from "framer-motion";
 import { Car, User, CarsProps } from '../../interfaces/interfaces';
 import { containerVariants, itemVariants } from '../../styles/styles';
-import AdminCarModal from './AdminCarModal';
-import ModifyCarModal from '../ModifyCarModal';
-
+import DeleteCarModal from './DeleteCarModal';
+import ModifyCarModal from './ModifyCarModal';
+import { carCategories } from '../../utils/carCategories';
 
 //TODO törlésnél is frissuljon
 function AdminCars({ refreshKey }: { refreshKey: number }) {
@@ -13,20 +13,7 @@ function AdminCars({ refreshKey }: { refreshKey: number }) {
   const [modal, setModal] = useState(false);  
   const [modalModifyCar, setModifyCar] = useState(false);  
 
-  const carCategories: { [key: number]: string } = {
-    1: "Személyautó",
-    4: "Sedan",
-    5: "Kombi",
-    6: "Hatchback",
-    7: "SUV",
-    8: "Crossover",
-    9: "Kupé",
-    10: "Cabrio",
-    11: "MPV / Egyterű",
-    12: "Pickup",
-  };
 
-  
     const getCars = async () => {
       const response = await fetch("https://localhost:7175/api/Cars/list-available-cars", {
         method: "GET",
@@ -37,7 +24,6 @@ function AdminCars({ refreshKey }: { refreshKey: number }) {
       });
       const cars = await response.json();
       setCars(cars);
-      console.log(cars);
     }
 
 
@@ -101,8 +87,8 @@ const handleCloseDeleteCar = () => {
                   Férőhelyek: {car.capacity}
                 </p>
                 <p className="mb-3 font-normal text-gray-700 ">
-                Kategória: {car.carCategory?.id && carCategories[car.carCategory.id] 
-                  ? carCategories[car.carCategory.id] 
+                Kategória: {car.carCategoryId && carCategories[car.carCategoryId] 
+                  ? carCategories[car.carCategoryId] 
                   : "Ismeretlen"}
               </p>
                 <p className="mb-3 font-normal text-gray-700 ">
@@ -132,7 +118,7 @@ const handleCloseDeleteCar = () => {
       ))}
     </motion.div>
     <ModifyCarModal modifyCar={selectedCar} open={modalModifyCar} handleClose={handleCloseModifyCar} refreshCars={getCars}/>
-    <AdminCarModal deleteCar={selectedCar} open={modal} handleClose={handleCloseDeleteCar} refreshCars={getCars}/> 
+    <DeleteCarModal deleteCar={selectedCar} open={modal} handleClose={handleCloseDeleteCar} refreshCars={getCars}/> 
     </div>
   )
 }

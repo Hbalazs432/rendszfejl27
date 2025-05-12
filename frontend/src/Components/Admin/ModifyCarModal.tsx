@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { motion } from "framer-motion";
-import { Car, User, CarsProps } from '../interfaces/interfaces';
-import { style } from "../styles/styles";
+import { Car, User, CarsProps } from '../../interfaces/interfaces';
+import { style } from "../../styles/styles";
 import {toast} from 'react-toastify'
 import Box from "@mui/material/Box";
-import Modal, { ModalRoot } from "@mui/material/Modal";
+import Modal from "@mui/material/Modal";
 
 function ModifyCarModal({
     modifyCar,
@@ -39,7 +38,7 @@ function ModifyCarModal({
   
     const handleUpdate = async () => {
       if (!formData) return;
-  
+      
       try {
         const token = localStorage.getItem("token");
         const id = modifyCar?.id
@@ -60,7 +59,6 @@ function ModifyCarModal({
         }
   
         toast.success("Sikeres frissítés!");
-        console.log(modifyCar)
         refreshCars();
         handleClose();
       } catch (err) {
@@ -104,7 +102,7 @@ function ModifyCarModal({
               value={formData.yearOfManufacture}
               onChange={handleChange}
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
-              placeholder="year"
+              placeholder="Évjárat"
             />
             <input
               name="licensePlateNumber"
@@ -112,7 +110,7 @@ function ModifyCarModal({
               value={formData.licensePlateNumber}
               onChange={handleChange}
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
-              placeholder="license plate"
+              placeholder="Rendszám"
             />
             <input
               name="price"
@@ -136,7 +134,7 @@ function ModifyCarModal({
               value={formData.seats}
               onChange={handleChange}
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
-              placeholder="ülések"
+              placeholder="Ülések"
             />
                           <select
                 name="transmission"
@@ -159,6 +157,14 @@ function ModifyCarModal({
 
             {/*carcategory fix */}
             <input
+              name="capacity"
+              type="number"
+              value={formData.capacity}
+              onChange={handleChange}
+              className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
+              placeholder="Kapacitás"
+            />
+            <input
               name="carCategoryId"
               type="number"
               value={formData.carCategoryId}
@@ -166,14 +172,14 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="carCategoryId"
             />
-                        <select
+              <select
               name="engine"
               value={formData.engine}
               onChange={handleChange}
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
             >
               <option value="Electronic">Elektromos</option>
-              <option value="Diesel">Dízel</option>
+              <option value="Diesel">Diesel</option>
             </select>
             {/* <input
               name="status"
