@@ -21,6 +21,7 @@ function Clerk() {
   });
   const [pendingRents, setPendingRents] = useState<Rents[]>([]);
   const [acceptedRents, setAcceptedRents] = useState<Rents[]>([]);
+  const [declinedRents, setDeclinedRents] = useState<Rents[]>([]);
   const [finishedRents, setFinishedRents] = useState<Rents[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedOption, setselectedOption] = useState("");
@@ -119,11 +120,30 @@ function Clerk() {
         );
         const finished = await response.json();
         setFinishedRents(finished);
-        console.log(finished);
+        //console.log(finished);
       } catch (error) {
         console.log(error);
       }
     };
+      const loadDeclinedRents = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:7175/api/Rents/declined-rents`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const declined = await response.json();
+        setDeclinedRents(declined);
+        //console.log(declined);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    loadDeclinedRents();
     loadAcceptRents();
     loadPendingRents();
     finishedRents();
@@ -155,6 +175,31 @@ function Clerk() {
     }
   };
 
+
+    const declineRent = async (pendig: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const orderId = pendig;
+      const response = await fetch(
+        `https://localhost:7175/api/Rents/decline-rent/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.ok) {
+        toast.success("A kérés elutasítva");
+        setRefreshKey((prev) => prev + 1);
+      } else {
+        const error = await response.text();
+        toast.error(`Hiba történt: ${error}`);
+      }
+    } catch (error) {
+      toast.error("A kérés sikertelen volt");
+      console.log(error);
+    }
+  };
   const handleChange = (e: SelectChangeEvent<string>) => {
     setselectedOption(e.target.value);
   };
@@ -195,6 +240,8 @@ function Clerk() {
         </div>
       </div>
 
+
+{/*TODO finishedrents  */}
       {selectedOption === "pendingRents" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {pendingRents.map((pending, index) => (
@@ -283,14 +330,9 @@ function Clerk() {
                       >
                         Elfogadás
                       </button>
-                  {/* <button
-                    className="bg-green-500 hover:bg-green-700 p-2 rounded-lg text-white"
-                    onClick={() => setModal(true)}
-                  >
-                    Elfogadás
-                  </button> */}
-
-                  <button className="bg-red-500  hover:bg-red-700 p-2 rounded-lg text-white">
+                  <button 
+                  onClick={() => declineRent(pending.id)}
+                  className="bg-red-500  hover:bg-red-700 p-2 rounded-lg text-white">
                     Elutasítás
                   </button>
                         <Modal
@@ -449,7 +491,86 @@ function Clerk() {
           </div>
         </div>
       ) : selectedOption === "deniedRents" ? (
-        <div>Denied</div>
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {declinedRents.map((declined, index) => (
+            <div
+              key={index}
+              className="border rounded-lg p-4 shadow-sm hover:shadow-gray-300 transition bg-gray-200"
+            >
+              <div className="space-y-5">
+                <p className="text-gray-700 font-medium">
+                  Igénylő: <span className="font-bold">{declined.email}</span>
+                </p>
+                <div className="border-2 border-gray-300 rounded-lg p-2 flex flex-col">
+                  <div className="p-5 flex flex-col flex-grow">
+                    <h5 className="text-2xl font-bold line-clamp-1 tracking-tight text-gray-900 ">
+                      {declined.car.brand} {declined.car.model}{" "}
+                      {declined.car.yearOfManufacture}
+                    </h5>
+                    <div className="mt-2 space-y-1 flex-grow">
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Rendszám : {declined.car.licensePlateNumber}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Ár: {declined.car.price}/nap
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Km: {declined.car.distance}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Ülések: {declined.car.seats}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Váltó:{" "}
+                        {declined.car.transmission === "Manual"
+                          ? "Manuális"
+                          : "Automata"}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Fogyasztás: {declined.car.consumption}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Férőhelyek: {declined.car.capacity}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Kategória:{" "}
+                        {declined.car.carCategoryId &&
+                        carCategories[declined.car.carCategoryId]
+                          ? carCategories[declined.car.carCategoryId]
+                          : "Ismeretlen"}
+                      </p>
+                      <p className="mb-3 font-normal text-gray-700 ">
+                        Motor:{" "}
+                        {declined.car.engine === "Electronic"
+                          ? "Elektromos"
+                          : "Diesel"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-700 font-medium">
+                  Id: <span className="font-bold">{declined.id}</span>
+                </p>
+                <p className="text-gray-700 font-medium">
+                  Kezdés dátuma:{" "}
+                  <span className="font-bold">{declined.startDate}</span>
+                </p>
+                <p className="text-gray-700 font-medium">
+                  Befejezés dátuma:{" "}
+                  <span className="font-bold">{declined.endDate}</span>
+                </p>
+                <p className="text-gray-600">
+                  Státusz:{" "}
+                  <span className="font-semibold bg-red-500 text-white p-2 mt-2 rounded-lg">
+                    {declined.rentStatus === "Denied"
+                      ? "Elutasítva"
+                      : "Hiba történt"}
+                  </span>
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         ""
       )}
