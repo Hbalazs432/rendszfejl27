@@ -8,12 +8,12 @@ import Admin from './Components/Admin/Admin';
 import { ToastContainer, toast } from 'react-toastify';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import Datepicker from './Components/DatePicker';
 import {SkeletonTheme} from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import ProtectedRoute  from './Components/ProtectedRoute';
 import Clerk from './Components/Clerk/Clerk';
 import RentAnonym from './Components/RentAnonym';
+
 
 
 function App() {

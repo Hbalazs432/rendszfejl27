@@ -94,6 +94,8 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
       animate="visible"
       viewport={{ once: false, amount: 0.2 }}
     >
+
+
       {cars.map((car, index) => (
         <motion.div
           key={index}
@@ -102,7 +104,6 @@ function Cars({user, onRefresh}: {user: User, onRefresh: () => void}) {
         >
           <div className="m-1 border-gray-300 border-2 rounded-lg shadow-light flex flex-col h-full">
             <div className="h-78 overflow-hidden rounded-t-lg">
-              {/* <img className="h-full rounded-t-lg" src={car.image_url} /> */}
             </div>
 
             <div className="p-5 flex flex-col flex-grow">

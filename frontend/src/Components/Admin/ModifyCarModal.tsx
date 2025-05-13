@@ -35,6 +35,8 @@ function ModifyCarModal({
           : value,
       });
     };
+
+     
   
     const handleUpdate = async () => {
       if (!formData) return;
@@ -181,15 +183,6 @@ function ModifyCarModal({
               <option value="Electronic">Elektromos</option>
               <option value="Diesel">Diesel</option>
             </select>
-            {/* <input
-              name="status"
-              type="text"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
-              placeholder="státusz"
-            />
-            */}
             </div>
            
             <div className="flex justify-between">

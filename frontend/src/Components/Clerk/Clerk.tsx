@@ -150,11 +150,10 @@ function Clerk() {
 
   }, [refreshKey]);
   //jó minden
-  const acceptRent = async (pendig: number, StatusCar: number) => {
+  const acceptRent = async (pendig: number) => {
     const token = localStorage.getItem("token");
     try {
       const orderId = pendig;
-      const carId = StatusCar;
       const response = await fetch(
         `https://localhost:7175/api/Rents/accept-rent/${orderId}`,
         {
@@ -163,20 +162,12 @@ function Clerk() {
             Authorization: `Bearer ${token}`,
           },
         })
-
-          const carResponse = await fetch(
-        `https://localhost:7175/api/Cars/change-status-rented/${carId}`,{
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        if (response.ok && carResponse.ok) {
+       if (response.ok) {
         toast.success("A kérés elfogadva");
         setRefreshKey((prev) => prev + 1);
       } else {
         const error = await response.text();
-        toast.error(`Ez az autó már le van foglalva`);
+        toast.error(error);
       }
     } catch (error) {
       toast.error("A kérés sikertelen volt");
@@ -211,6 +202,34 @@ function Clerk() {
       console.log(error);
     }
   };
+
+  const finishRent = async (pendig: number) => {
+    const token = localStorage.getItem("token");
+    try {
+      const orderId = pendig;
+      const response = await fetch(
+        `https://localhost:7175/api/Rents/finish-rent/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+    
+
+        if (response.ok) {
+        toast.success("A kérés sikeresen lezárva");
+        setRefreshKey((prev) => prev + 1);
+      } else {
+        const error = await response.text();
+        toast.error(`Hiba történt: ${error}`);
+      }
+    } catch (error) {
+      toast.error("A kérés sikertelen volt");
+      console.log(error);
+    }
+  }
+
   const handleChange = (e: SelectChangeEvent<string>) => {
     setselectedOption(e.target.value);
   };
@@ -338,7 +357,7 @@ function Clerk() {
                 <div className="flex text-center justify-center space-x-3">
                   <button
                         className="bg-green-500 hover:bg-green-700 p-2 rounded-lg text-white"
-                        onClick={() => acceptRent(pending.id, pending.car.id)}
+                        onClick={() => acceptRent(pending.id)}
                       >
                         Elfogadás
                       </button>
@@ -359,7 +378,7 @@ function Clerk() {
                     <div className="flex justify-center flex-col gap-5  w-1/2">
                     <h1 className="font-bold">Lefoglaltra állítod az autót?</h1>
                     <button
-                    onClick={() => acceptRent(pending.id, pending.car.id)}
+                    onClick={() => acceptRent(pending.id)}
                     className="bg-green-500 hover:bg-green-700 p-2 rounded-lg text-white">
                       Igen
                     </button>
@@ -455,18 +474,16 @@ function Clerk() {
                       ? "Elfogadva"
                       : "Hiba történt"}
                   </span>
+                  <button 
+                  onClick={() => finishRent(accepted.id)}
+                  className="font-semibold bg-red-500 hover:bg-red-700 text-white p-2 m-2 rounded-lg">Lejárt bérlés</button>
                 </p>
               </div>
             </div>
           ))}
         </div>
       ) : selectedOption === "finishedRents" ? (
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="bg-white border-2 border-gray-300 rounded-xl shadow-lg p-8 w-full max-w-md">
-            <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
-              Lejárt bérlések
-            </h2>
-            <div className="space-y-4">
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {finishedRents.map((finished, index) => (
                 <div
                   key={index}
@@ -500,8 +517,6 @@ function Clerk() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
       ) : selectedOption === "deniedRents" ? (
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {declinedRents.map((declined, index) => (
@@ -584,7 +599,7 @@ function Clerk() {
           ))}
         </div>
       ) : (
-        ""
+        null
       )}
     </div>
   );
