@@ -19,20 +19,20 @@ namespace BerAuto.Services
     public interface IUserService
     {
         Task<RoleDto> CreateRoleAsync(RoleCreateDto roleCreateDto);
-        Task<RoleDto> UpdateRoleAsync(int id,RoleUpdateDto roleUpdateDto);
+        Task<RoleDto> UpdateRoleAsync(int id, RoleUpdateDto roleUpdateDto);
 
         Task<bool> DeleteRoleAsync(int id);
         Task<IList<RoleDto>> GetAllRolesAsync();
 
         Task<UserDto> RegisterUserAsync(UserCreateDto userCreateDto);
         Task<string> LoginAsync(UserLoginDto userLoginDto);
-        Task<UserDto> UpdateProfileAsync(int id,UserUpdateDto userUpdateDto);
+        Task<UserDto> UpdateProfileAsync(int id, UserUpdateDto userUpdateDto);
         Task<UserDto> UpdateAddressAsync(int id, AddressCreateDto addressCreateDto);
         Task<UserDto> UpdatePhoneAsync(int id, UpdatePhoneDto updatePhoneDto);
         Task<UserDto> GetUserAsync(int id);
     }
 
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
@@ -49,7 +49,7 @@ namespace BerAuto.Services
             await _context.SaveChangesAsync();
             return _mapper.Map<RoleDto>(role);
         }
-        public async Task<RoleDto> UpdateRoleAsync(int roleId, RoleUpdateDto roleUpdateDto) 
+        public async Task<RoleDto> UpdateRoleAsync(int roleId, RoleUpdateDto roleUpdateDto)
         {
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
             if (role is null)
@@ -83,7 +83,7 @@ namespace BerAuto.Services
         {
             var user = _mapper.Map<User>(userCreateDto);
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.PasswordHash);
-            user.Roles=new List<Role>();
+            user.Roles = new List<Role>();
             if (!user.Roles.Any())
             {
                 user.Roles.Add(await GetDefaultCustomerRoleAsync());
@@ -113,7 +113,7 @@ namespace BerAuto.Services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(Convert.ToDouble(5));
             var id = await GetClaimsIdentity(user);
-            var token = new JwtSecurityToken("https://localhost:7175/", "https://localhost:7175/", id.Claims, expires: expires, signingCredentials: creds);
+            var token = new JwtSecurityToken(issuer: "https://localhost:7175/", audience: "http://localhost:5173/", id.Claims, expires: expires, signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -129,7 +129,7 @@ namespace BerAuto.Services
                 new Claim(JwtRegisteredClaimNames.AuthTime, DateTime.Now.ToString(CultureInfo.InvariantCulture))
             };
 
-            if(user.Roles != null && user.Roles.Any())
+            if (user.Roles != null && user.Roles.Any())
             {
                 claims.AddRange(user.Roles.Select(role => new Claim("roleIds", Convert.ToString(role.Id))));
                 claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
@@ -140,7 +140,7 @@ namespace BerAuto.Services
 
         public async Task<UserDto> UpdateProfileAsync(int id, UserUpdateDto userUpdateDto)
         {
-            var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id==id);
+            var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == id);
             if (user is null)
             {
                 throw new KeyNotFoundException($"No user found with id: {id}");
@@ -157,7 +157,7 @@ namespace BerAuto.Services
                         user.Roles.Add(existingRole);
                     }
                 }
-            
+
             }
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -167,13 +167,13 @@ namespace BerAuto.Services
 
         public async Task<UserDto> UpdateAddressAsync(int id, AddressCreateDto addressCreateDto)
         {
-            var user= await _context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id==id);
+            var user = await _context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == id);
             if (user is null)
             {
                 throw new KeyNotFoundException($"No user found with id: {id}");
             }
-            user.Address= _mapper.Map<Address>(addressCreateDto);
-            _context.Users.Update(user);    
+            user.Address = _mapper.Map<Address>(addressCreateDto);
+            _context.Users.Update(user);
 
             await _context.SaveChangesAsync();
 
@@ -195,7 +195,7 @@ namespace BerAuto.Services
         }
         public async Task<UserDto> GetUserAsync(int id)
         {
-            var user= await _context.Users.Include(u => u.Address).Include(u=>u.Roles).FirstOrDefaultAsync(u => u.Id==id);
+            var user = await _context.Users.Include(u => u.Address).Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
                 throw new KeyNotFoundException($"No user found with id: {id}");

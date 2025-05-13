@@ -17,6 +17,8 @@ namespace BerAuto.DataContext.Dtos
         public int? CarId { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
+
+        public CarDto Car { get; set; }
     }
 
     public class RentCreateDto

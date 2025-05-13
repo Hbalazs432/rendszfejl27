@@ -164,9 +164,9 @@ namespace BerAuto.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Administrator")]
+        //    [Authorize(Roles = "Administrator, Customer")] //?
         public async Task<IActionResult> GetUser(int id)
-        { 
+        {
             try
             {
                 var result = await _userService.GetUserAsync(id);

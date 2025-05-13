@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using QuestPDF.Infrastructure;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,13 +17,25 @@ builder.Services.AddControllers().AddJsonOptions(opts =>
     opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy => policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod());
+});
+
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer("Server=adatb-mssql.mik.uni-pannon.hu,2019;Database=h10_s4buby;User Id=h10_s4buby;" +
         "Password=fwW4azqkS6;TrustServerCertificate=True;"));
+
+
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentService, RentService>();
+builder.Services.AddScoped <BillingService>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
     AddJwtBearer(options =>
@@ -35,10 +47,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = "https://localhost:7175/",
-            ValidAudience = "https://localhost:7175/",//ezt majd cserélni a frontendesre ha swaggerben mûködik http://localhost:5173/, meg a userServiceben a token generálásnál
+            ValidAudience = "http://localhost:5173/",//ezt majd cserélni a frontendesre ha swaggerben mûködik http://localhost:5173/, meg a userServiceben a token generálásnál
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ME2nCqWZ0JkT0VLQaq3PLgWElyVOpmMd"))
         };
     });
+
 
 // AutoMapper Config
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -69,10 +82,8 @@ builder.Services.AddSwaggerGen(c =>
         new string[] { }
     }});
 });
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddTransient<EmailService>();
-builder.Services.AddTransient<BillingService>();
-QuestPDF.Settings.License = LicenseType.Community;
+
+
 
 var app = builder.Build();
 
@@ -84,6 +95,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Rendszfejl - BerAuto API v1"));
 }
 
+
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
@@ -92,3 +105,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

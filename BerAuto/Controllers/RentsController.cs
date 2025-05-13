@@ -64,6 +64,22 @@ namespace BerAuto.Controllers
             }
         }
 
+
+        [HttpPut("decline-rent/{orderId}")]
+        [Authorize(Roles = "Clerk")]
+        public async Task<IActionResult> Decline(int orderId)
+        {
+            try
+            {
+                var result = await _rentService.DeclineRentAsync(orderId);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
         [HttpPut("finish-rent/{orderId}")]
         [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> Finish(int orderId)
@@ -141,6 +157,21 @@ namespace BerAuto.Controllers
             }
         }
 
+        [HttpGet("declined-rents")]
+        [Authorize(Roles = "Clerk")]
+        public async Task<IActionResult> ListDeclinedRents()
+        {
+            try
+            {
+                var result = await _rentService.GetDeclinedRents();
+                return Ok(result);
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
         [HttpPut("send-invoice/{orderId}")]
         [Authorize(Roles = "Clerk")]
         public async Task<IActionResult> SendInvoice(int orderId)
@@ -149,6 +180,22 @@ namespace BerAuto.Controllers
             {
                 var result = await _rentService.SendInvoiceAsync(orderId);
                 return Ok();
+            }
+            catch (Exception exc)
+            {
+                return BadRequest(exc.Message);
+            }
+        }
+
+        [HttpGet("user-rents/{userId}")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> ListUserRents()
+        {
+            try
+            {
+                var userId = int.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
+                var result = await _rentService.GetRentsByUser(userId);
+                return Ok(result);
             }
             catch (Exception exc)
             {
