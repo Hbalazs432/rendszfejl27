@@ -64,52 +64,52 @@ namespace BerAuto.Services
             return _mapper.Map<RentDto>(rent);
         }
 
-                public async Task<bool> DeclineRentAsync(int orderId)
+        public async Task<bool> DeclineRentAsync(int orderId)
+        {
+            try
+            {
+                var rentToDecline = await _context.Rents
+                    .FirstOrDefaultAsync(r => r.Id == orderId && r.RentStatus == RentStatus.Pending);
+
+                if (rentToDecline == null)
                 {
-                    try
-                    {
-                        var rentToDecline = await _context.Rents
-                            .FirstOrDefaultAsync(r => r.Id == orderId && r.RentStatus == RentStatus.Pending);
-
-                        if (rentToDecline == null)
-                        {
-                            Console.WriteLine($"[INFO] No pending rent found with id: {orderId}");
-                            throw new Exception($"Nincs elutasítható bérlés ezzel az ID-val: {orderId}");
-                        }
-
-                        rentToDecline.RentStatus = RentStatus.Denied;
-
-                        var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == rentToDecline.CarId);
-
-                        Console.WriteLine($"[INFO] Rent #{orderId} elutasítva. Email küldése: {rentToDecline.Email}");
-
-                        await _emailService.SendEmailAsync(
-                            rentToDecline.Email,
-                            "Bérlési igény elutasítva",
-                            $@"Tisztelt Uram / Hölgyem!
-
-                        Sajnálattal értesítjük, hogy az Ön autóbérlési igényét elutasítottuk.
-
-                        Részletek:
-                        - Autó: {car?.Brand} {car?.Model}
-                        - Bérlés időszaka: {rentToDecline.StartDate:yyyy-MM-dd} - {rentToDecline.EndDate:yyyy-MM-dd}
-
-                        Megértését köszönjük.
-
-                        BérAutó csapat",
-                            null, null
-                        );
-
-                        await _context.SaveChangesAsync();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[ERROR] {ex.Message}");
-                        throw;
-                    }
+                    Console.WriteLine($"[INFO] No pending rent found with id: {orderId}");
+                    throw new Exception($"Nincs elutasítható bérlés ezzel az ID-val: {orderId}");
                 }
 
+                rentToDecline.RentStatus = RentStatus.Denied;
+
+                var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == rentToDecline.CarId);
+
+                Console.WriteLine($"[INFO] Rent #{orderId} elutasítva. Email küldése: {rentToDecline.Email}");
+
+                await _emailService.SendEmailAsync(
+                    rentToDecline.Email,
+                    "Bérlési igény elutasítva", $@"
+                    Tisztelt Uram / Hölgyem!
+
+                    Sajnálattal értesítjük, hogy az Ön autóbérlési igényét elutasítottuk.
+
+                    Részletek:
+                    - Autó: {car?.Brand} {car?.Model}
+                    - Bérlés kezdete: {rentToDecline.StartDate:yyyy-MM-dd}
+                    - Bérlés vége: {rentToDecline.EndDate:yyyy-MM-dd}
+
+                    Megértését köszönjük.
+
+                    BérAutó csapat",
+                    null, null
+                );
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] {ex.Message}");
+                throw;
+            }
+        }
 
         public async Task<bool> AcceptRentAsync(int orderId)
         {
@@ -153,14 +153,23 @@ namespace BerAuto.Services
 
                     rent.RentStatus = RentStatus.Denied;
 
+                    var carDeclined = await _context.Cars.FirstOrDefaultAsync(c => c.Id == rent.CarId);
+
                     await _emailService.SendEmailAsync(
                         rent.Email,
-                        "Bérlési igény elutasítva",
-                        @"Tisztelt Uram / Hölgyem!
+                        "Bérlési igény elutasítva", $@"
+                        Tisztelt Uram / Hölgyem!
 
-                Bérlési igényét sajnos el kellett utasítanunk időpontütközés miatt.
+                        Sajnálattal értesítjük, hogy az Ön autóbérlési igényét elutasítottuk.
 
-                BérAutó",
+                        Részletek:
+                        - Autó: {carDeclined?.Brand} {carDeclined?.Model}
+                        - Bérlés kezdete: {rent.StartDate:yyyy-MM-dd}
+                        - Bérlés vége: {rent.EndDate:yyyy-MM-dd}
+
+                        Megértését köszönjük.
+
+                        BérAutó csapat",
                         null,
                         null
                     );
@@ -170,17 +179,17 @@ namespace BerAuto.Services
 
                 await _emailService.SendEmailAsync(
                     acceptedRent.Email,
-                    "Bérlési igény elfogadva",
-                    $@"Tisztelt Uram / Hölgyem!
+                    "Bérlési igény elfogadva", $@"
+                    Tisztelt Uram / Hölgyem!
 
-            Elfogadtuk az autóbérlési igényét.
+                    Elfogadtuk az autóbérlési igényét.
 
-            Részletek:
-            - Autó: {car?.Brand} {car?.Model}
-            - Bérlés kezdete: {acceptedRent.StartDate:yyyy-MM-dd}
-            - Bérlés vége: {acceptedRent.EndDate:yyyy-MM-dd}
+                    Részletek:
+                    - Autó: {car?.Brand} {car?.Model}
+                    - Bérlés kezdete: {acceptedRent.StartDate:yyyy-MM-dd}
+                    - Bérlés vége: {acceptedRent.EndDate:yyyy-MM-dd}
 
-            BérAutó",
+                    BérAutó csapat",
                     null,
                     null
                 );
@@ -197,8 +206,6 @@ namespace BerAuto.Services
                 throw;
             }
         }
-
-
 
         public async Task<bool> FinishRentAsync(int rentId)
         {

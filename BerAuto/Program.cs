@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,7 @@ builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRentService, RentService>();
 builder.Services.AddScoped <BillingService>();
+QuestPDF.Settings.License = LicenseType.Community;
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
