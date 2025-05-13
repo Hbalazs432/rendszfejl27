@@ -150,10 +150,11 @@ function Clerk() {
 
   }, [refreshKey]);
   //jó minden
-  const acceptRent = async (pendig: number) => {
+  const acceptRent = async (pendig: number, StatusCar: number) => {
     const token = localStorage.getItem("token");
     try {
       const orderId = pendig;
+      const carId = StatusCar;
       const response = await fetch(
         `https://localhost:7175/api/Rents/accept-rent/${orderId}`,
         {
@@ -162,12 +163,20 @@ function Clerk() {
             Authorization: `Bearer ${token}`,
           },
         })
-        if (response.ok) {
+
+          const carResponse = await fetch(
+        `https://localhost:7175/api/Cars/change-status-rented/${carId}`,{
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.ok && carResponse.ok) {
         toast.success("A kérés elfogadva");
         setRefreshKey((prev) => prev + 1);
       } else {
         const error = await response.text();
-        toast.error(`Hiba történt: ${error}`);
+        toast.error(`Ez az autó már le van foglalva`);
       }
     } catch (error) {
       toast.error("A kérés sikertelen volt");
@@ -188,6 +197,8 @@ function Clerk() {
             Authorization: `Bearer ${token}`,
           },
         })
+    
+
         if (response.ok) {
         toast.success("A kérés elutasítva");
         setRefreshKey((prev) => prev + 1);
@@ -258,6 +269,7 @@ function Clerk() {
                     <h5 className="text-2xl font-bold line-clamp-1 tracking-tight text-gray-900 ">
                       {pending.car.brand} {pending.car.model}{" "}
                       {pending.car.yearOfManufacture}
+                      
                     </h5>
                     <div className="mt-2 space-y-1 flex-grow">
                       <p className="mb-3 font-normal text-gray-700 ">
@@ -267,7 +279,7 @@ function Clerk() {
                         Ár: {pending.car.price}/nap
                       </p>
                       <p className="mb-3 font-normal text-gray-700 ">
-                        addressId: {pending.addressId}
+                       carId: {pending.car.id}
                       </p>
                       <p className="mb-3 font-normal text-gray-700 ">
                         Km: {pending.car.distance}
@@ -326,7 +338,7 @@ function Clerk() {
                 <div className="flex text-center justify-center space-x-3">
                   <button
                         className="bg-green-500 hover:bg-green-700 p-2 rounded-lg text-white"
-                        onClick={() => acceptRent(pending.id)}
+                        onClick={() => acceptRent(pending.id, pending.car.id)}
                       >
                         Elfogadás
                       </button>
@@ -347,7 +359,7 @@ function Clerk() {
                     <div className="flex justify-center flex-col gap-5  w-1/2">
                     <h1 className="font-bold">Lefoglaltra állítod az autót?</h1>
                     <button
-                    onClick={() => acceptRent(pending.id)}
+                    onClick={() => acceptRent(pending.id, pending.car.id)}
                     className="bg-green-500 hover:bg-green-700 p-2 rounded-lg text-white">
                       Igen
                     </button>
