@@ -126,21 +126,7 @@ function Admin() {
     const token = localStorage.getItem("token");
     
 
-    // DUMMY DATA AMI MUKODIK
-    // const carData = {
-    //   licensePlateNumber: "ABC-123",
-    //   brand: "AUDI",
-    //   model: "S24",
-    //   yearOfManufacture: 2005,
-    //   seats: 2,
-    //   transmission: "Manual",
-    //   distance: 5454,
-    //   consumption: 3.2,
-    //   capacity: 4,
-    //   carCategoryId: 4,
-    //   engine: "Diesel",
-    //   price: 2220
-    // };
+   
 
     
      console.log(addedCar)
@@ -228,7 +214,7 @@ function Admin() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
                  <TextField
                   id="outlined-basic"
-                  label="License Plate"
+                  label="Rendszám"
                   variant="outlined"
                   name="licensePlateNumber"
                   type="text"
@@ -237,7 +223,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Brand"
+                  label="Márka"
                   variant="outlined"
                   name="brand"
                   type="text"
@@ -255,7 +241,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Capacity"
+                  label="Kapacitás"
                   variant="outlined"
                   name="capacity"
                   type="number"
@@ -264,7 +250,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Year"
+                  label="Évjárat"
                   variant="outlined"
                   name="yearOfManufacture"
                   type="number"
@@ -273,7 +259,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Seats"
+                  label="Ülések"
                   variant="outlined"
                   name="seats"
                   type="number"
@@ -281,7 +267,7 @@ function Admin() {
                   onChange={handleDataChange}
                 />
                 <FormControl fullWidth>
-                <InputLabel id="transmission-label">Transmission</InputLabel>
+                <InputLabel id="transmission-label">Típus</InputLabel>
                   <Select
                     labelId="transmission-label"
                     name="transmission"
@@ -290,14 +276,14 @@ function Admin() {
                   >
                     {transmissionOptions.map((option) => (
                       <MenuItem key={option} value={option}>
-                        {option}
+                        {(option === "Manual" ? "Manuális" : "Autómata")}
                       </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
 
                 <FormControl fullWidth>
-                  <InputLabel id="engine-label">Engine</InputLabel>
+                  <InputLabel id="engine-label">Motor</InputLabel>
                   <Select
                     labelId="engine-label"
                     name="engine"
@@ -306,7 +292,7 @@ function Admin() {
                   >
                     {engineOptions.map((option) => (
                       <MenuItem key={option} value={option}>
-                        {option}
+                        {(option === "Diesel" ? "Dízel" : "Elektromos")}
                       </MenuItem>
                     ))}
                   </Select>
@@ -314,7 +300,7 @@ function Admin() {
 
                 <TextField
                   id="outlined-basic"
-                  label="Distance"
+                  label="Km"
                   variant="outlined"
                   name="distance"
                   type="number"
@@ -323,7 +309,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Consumption"
+                  label="Fogyasztás"
                   variant="outlined"
                   name="consumption"
                   type="number"
@@ -332,7 +318,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Car category id"
+                  label="Autó kategória"
                   variant="outlined"
                   name="carCategoryId"
                   type="number"
@@ -341,7 +327,7 @@ function Admin() {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Price"
+                  label="Ár"
                   variant="outlined"
                   name="price"
                   type="number"

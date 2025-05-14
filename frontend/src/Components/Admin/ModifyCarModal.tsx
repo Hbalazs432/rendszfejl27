@@ -80,24 +80,28 @@ function ModifyCarModal({
         className="border-2 border-gray-500 rounded-lg"
       >
         <Box sx={{ ...style, width: 600 }}>
-            <div className='text-center justify-center'>
-            <h2 className="text-xl font-bold">Autó szerkesztése</h2>
-            <input
-              name="brand"
-              type='text'
-              value={formData.brand}
-              onChange={handleChange}
-              className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
-              placeholder="Márka"
-            />
-            <input
-              name="model"
-              type='text'
-              value={formData.model}
-              onChange={handleChange}
-              className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
-              placeholder="Modell"
-            />
+                <h2 className="text-xl text-center mb-2 font-bold">Autó szerkesztése</h2>
+            <div className='grid grid-cols-2 gap-3 justify-center items-center'>
+                <label className="text-center">Márka:</label>
+                  <input
+                    name="brand"
+                    type="text"
+                    value={formData.brand}
+                    onChange={handleChange}
+                    className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
+                    placeholder="Márka"
+                  />
+              <label className="text-center">Modell:</label>
+              <input
+                name="model"
+                type="text"
+                value={formData.model}
+                onChange={handleChange}
+                className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
+                placeholder="Modell"
+              />
+
+            <label className="text-center">Szín:</label>
             <input
               name="yearOfManufacture"
               type='number'
@@ -106,6 +110,7 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="Évjárat"
             />
+            <label className="text-center">Rendszám:</label>
             <input
               name="licensePlateNumber"
               type='text'
@@ -114,6 +119,7 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="Rendszám"
             />
+            <label className="text-center">Ár:</label>
             <input
               name="price"
               type="number"
@@ -122,6 +128,7 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="Ár / nap"
             />
+            <label className="text-center">Táv:</label>
             <input
               name="distance"
               type="number"
@@ -130,6 +137,7 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="Táv"
             />
+            <label className="text-center">Ülések:</label>
             <input
               name="seats"
               type="number"
@@ -138,7 +146,9 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="Ülések"
             />
-                          <select
+                          
+            <label className="text-center">Típus:</label>           
+              <select
                 name="transmission"
                 value={formData.transmission}
                 onChange={handleChange}
@@ -147,6 +157,7 @@ function ModifyCarModal({
                 <option value="Manual">Manuális</option>
                 <option value="Automatic">Automata</option>
               </select>
+            <label className="text-center">Fogyasztás:</label>
             <input
               name="consumption"
               type="number"
@@ -157,7 +168,7 @@ function ModifyCarModal({
             />
 
 
-            {/*carcategory fix */}
+            <label className="text-center">Űrtartalom:</label>
             <input
               name="capacity"
               type="number"
@@ -166,6 +177,7 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="Kapacitás"
             />
+            <label className="text-center">Kategória:</label>
             <input
               name="carCategoryId"
               type="number"
@@ -174,6 +186,7 @@ function ModifyCarModal({
               className="w-1/2 border m-2 bg-gray-300 rounded-md px-2 py-1"
               placeholder="carCategoryId"
             />
+            <label className="text-center">Motor:</label>
               <select
               name="engine"
               value={formData.engine}

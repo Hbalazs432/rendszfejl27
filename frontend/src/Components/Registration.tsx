@@ -96,9 +96,7 @@ function Registration() {
         animate={{ opacity: 2, scale: 1 }}
         className="h-screen w-screen flex justify-center items-center"
       >
-        {isPending ? (
-          <PropagateLoader color="#0030ff" />
-        ) : (
+        
           <form
             onSubmit={handleSubmit}
             ref={resetFrom}
@@ -200,7 +198,7 @@ function Registration() {
               </a>
             </div>
           </form>
-        )}
+        
       </motion.div>
     </div>
   );

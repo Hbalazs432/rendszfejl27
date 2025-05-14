@@ -19,7 +19,6 @@ function AdminCars({ refreshKey }: { refreshKey: number }) {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
         },
       });
       const cars = await response.json();

@@ -234,7 +234,7 @@ function User() {
                             ? "bg-green-600 p-2 rounded-lg"
                             : rent.rentStatus === "Denied"
                             ? "bg-red-500 p-2 rounded-lg"
-                            : ""
+                            : "bg-green-500 p-2 rounded-lg"
                         }
                       >
                         {rent.rentStatus === "Pending"
@@ -243,7 +243,7 @@ function User() {
                           ? "elfogadva"
                           : rent.rentStatus === "Denied"
                           ? "elutasítva"
-                          : ""}
+                          : "Lejárva"}
                       </p>
                     </div>
                   </div>

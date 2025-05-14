@@ -13,7 +13,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import ProtectedRoute  from './Components/ProtectedRoute';
 import Clerk from './Components/Clerk/Clerk';
 import RentAnonym from './Components/RentAnonym';
-import Testupload from './images/testupload';
+
 
 
 function App() {
@@ -24,7 +24,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/"  element={<><RentAnonym/><Login/></>} />
-        <Route path="/img" element={<><Testupload/></>} />
         <Route path="/registration" element={<><RentAnonym/><Registration /></>} />
         <Route path="/admin" element={<ProtectedRoute><Admin/></ProtectedRoute>}/>
         <Route path="/user" element={<ProtectedRoute><User/></ProtectedRoute>} />

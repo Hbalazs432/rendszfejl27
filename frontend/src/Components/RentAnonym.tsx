@@ -90,7 +90,7 @@ const handleFinalRent = async () =>{
           carId: selectedCar, 
           email: email, 
           startDate: startDate?.format("YYYY-MM-DD"), 
-          endDate: startDate?.format("YYYY-MM-DD")
+          endDate: endDate?.format("YYYY-MM-DD")
       })
     })
       const data = await response.json()
@@ -155,7 +155,7 @@ const handleFinalRent = async () =>{
          <Box sx={scrollModal} >
             <div className='flex justify-around m-5 gap-5'>
             <DatePicker label="Bérlés kezdésének ideje" minDate={dayjs()} value={startDate} onChange={handleStartDateChange}></DatePicker>
-            <DatePicker label="Bérlés lejáratának ideje" value={endDate} onChange={handleEndDateChange}></DatePicker> 
+            <DatePicker label="Bérlés lejáratának ideje" minDate={dayjs()} value={endDate} onChange={handleEndDateChange}></DatePicker> 
             </div>
            <h1 className='font-bold text-center text-lg mb-2 bg-blue-500 rounded-lg p-2 text-white'>Kölcsönözhető autók</h1>
            <div className='overflow-y-auto max-h-[60vh] space-y-4 justify-center text-center'>
