@@ -107,7 +107,6 @@ namespace BerAuto.Services
                     BérAutó csapat",
                     null, null
                 );
-
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -200,7 +199,8 @@ namespace BerAuto.Services
                     null,
                     null
                 );
-
+                car.Status = Status.Rented;
+                _context.Cars.Update(car);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -257,6 +257,8 @@ namespace BerAuto.Services
                     BérAutó csapat", pdfBytes, "invoice.pdf");
 
             rent.RentStatus = RentStatus.Finished;
+            car.Status = Status.Available;
+            _context.Cars.Update(car);
             _context.Rents.Update(rent);
             var result = await _context.SaveChangesAsync();
             return result > 0;
