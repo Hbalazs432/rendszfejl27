@@ -55,13 +55,13 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpGet("{idx}")]
+        [HttpGet("{carId}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetCar(int idx)
+        public async Task<IActionResult> GetCar(int carId)
         {
             try
             {
-                var result = await _carService.GetCarByIdAsync(idx);
+                var result = await _carService.GetCarByIdAsync(carId);
                 return Ok(result);
             }
             catch (Exception exc)
@@ -83,13 +83,13 @@ namespace BerAuto.Controllers
                 return BadRequest($"Creation failed. Error: {exc.Message}");
             }
         }
-        [HttpPut("update-car/{id}")]
+        [HttpPut("update-car/{carId}")]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> UpdateCar(int id, [FromBody] CarUpdateDto carUpdateDto)
+        public async Task<IActionResult> UpdateCar(int carId, [FromBody] CarUpdateDto carUpdateDto)
         {
             try
             {
-                var result = await _carService.UpdateCarAsync(id, carUpdateDto);
+                var result = await _carService.UpdateCarAsync(carId, carUpdateDto);
                 return Ok(result);
             }
             catch (Exception exc)
