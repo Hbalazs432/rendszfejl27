@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 
 namespace BerAuto.Services
@@ -81,6 +82,12 @@ namespace BerAuto.Services
 
         public async Task<UserDto> RegisterUserAsync(UserCreateDto userCreateDto)
         {
+
+            if (!IsValidEmail(userCreateDto.Email)) throw new Exception("Invalid e-mail address.");
+            //if (userCreateDto.Address.PostalCode == "") throw new Exception("Postal Code is required.");
+            //if (userCreateDto.Address.Street == "") throw new Exception("Street is required.");
+            //if (userCreateDto.Address.City == "") throw new Exception("City is required.");
+
             var user = _mapper.Map<User>(userCreateDto);
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.PasswordHash);
             user.Roles = new List<Role>();
@@ -157,8 +164,8 @@ namespace BerAuto.Services
                         user.Roles.Add(existingRole);
                     }
                 }
-
             }
+
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
@@ -213,6 +220,50 @@ namespace BerAuto.Services
             _context.Roles.Remove(role);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        private static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                // Normalize the domain
+                email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+                // Examines the domain part of the email and normalizes it.
+                string DomainMapper(Match match)
+                {
+                    // Use IdnMapping class to convert Unicode domain names.
+                    var idn = new IdnMapping();
+
+                    // Pull out and process domain name (throws ArgumentException on invalid)
+                    string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                    return match.Groups[1].Value + domainName;
+                }
+            }
+            catch (RegexMatchTimeoutException e)
+            {
+                return false;
+            }
+            catch (ArgumentException e)
+            {
+                return false;
+            }
+
+            try
+            {
+                return Regex.IsMatch(email,
+                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return false;
+            }
         }
     }
 }

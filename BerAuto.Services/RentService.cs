@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.ConstrainedExecution;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace BerAuto.Services
 {
@@ -42,6 +44,10 @@ namespace BerAuto.Services
         }
         public async Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId)
         {
+            if (rentCreateDto.StartDate < DateOnly.FromDateTime(DateTime.Now)) throw new Exception("You cannot make a request starting in the past.");
+            if (rentCreateDto.EndDate < DateOnly.FromDateTime(DateTime.Now)) throw new Exception("You cannot make a request ending in the past.");
+            if (rentCreateDto.EndDate < rentCreateDto.StartDate) throw new Exception("Invalid timeframe.");
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             var rent = _mapper.Map<Rent>(rentCreateDto);
             rent.RentStatus = RentStatus.Pending;
@@ -53,7 +59,10 @@ namespace BerAuto.Services
             else
             {
                 if (rentCreateDto.Email != null && rentCreateDto.Email != "")
-                    rent.Email = rentCreateDto.Email;
+                {
+                    if (!IsValidEmail(rent.Email)) throw new Exception("This is not a valid email address.");
+                    else rent.Email = rentCreateDto.Email;
+                }
                 else throw new Exception("Can't make a rent without an email address");
             }
 
@@ -291,6 +300,50 @@ namespace BerAuto.Services
                 .ToListAsync();
 
             return _mapper.Map<IList<RentDto>>(rents);
+        }
+
+        private static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            try
+            {
+                // Normalize the domain
+                email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+                // Examines the domain part of the email and normalizes it.
+                string DomainMapper(Match match)
+                {
+                    // Use IdnMapping class to convert Unicode domain names.
+                    var idn = new IdnMapping();
+
+                    // Pull out and process domain name (throws ArgumentException on invalid)
+                    string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                    return match.Groups[1].Value + domainName;
+                }
+            }
+            catch (RegexMatchTimeoutException e)
+            {
+                return false;
+            }
+            catch (ArgumentException e)
+            {
+                return false;
+            }
+
+            try
+            {
+                return Regex.IsMatch(email,
+                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                    RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return false;
+            }
         }
     }
 }
