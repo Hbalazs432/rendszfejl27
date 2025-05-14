@@ -61,6 +61,10 @@ namespace BerAuto.Services
         }
         public async Task<CarDto> CreateCarAsync(CarCreateDto car)
         {
+            //if (car.Transmission.Equals("")) throw new Exception("Transmission cannot be left empty.");
+            var category = await _context.CarCategories.FindAsync(car.CarCategoryId);
+            if (category == null || car.CarCategoryId <= 0) throw new Exception("Car category must be valid.");
+
             var res = _mapper.Map<Car>(car);
             res.Status = Status.Available;
             await _context.Cars.AddAsync(res);

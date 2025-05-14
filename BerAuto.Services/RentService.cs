@@ -54,7 +54,7 @@ namespace BerAuto.Services
             }
             else
             {
-                if (rentCreateDto.Email != null)
+                if (rentCreateDto.Email != null && rentCreateDto.Email != "")
                     rent.Email = rentCreateDto.Email;
                 else throw new Exception("Can't make a rent without an email address");
             }
