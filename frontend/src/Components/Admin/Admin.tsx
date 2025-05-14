@@ -123,14 +123,21 @@ function Admin() {
  
   const handleUpload = async (e: FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-    
-
-   
-
-    
+    const token = localStorage.getItem("token");    
      console.log(addedCar)
+
+
+    function validateCarData(car: CarData): boolean {
+       return Object.values(car).some(value =>
+        value === 0 || value === "" || value === null || value === undefined
+      );
+    }
   
+    if(validateCarData(addedCar)) {
+      toast.error("Kérlek adj meg megfelelő adatokat");
+      return;
+    }
+
     try {
       const response = await fetch("https://localhost:7175/api/Cars/create-car", {
         method: "POST",
