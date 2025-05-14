@@ -15,16 +15,14 @@ namespace BerAuto.Services
     public interface IRentService
     {
         Task<RentDto> CreateRentAsync(RentCreateDto rentCreateDto, int? userId);
-        Task<bool> AcceptRentAsync(int orderId);
-        Task<bool> DeclineRentAsync(int orderId);
+        Task<bool> AcceptRentAsync(int rentId);
+        Task<bool> DeclineRentAsync(int rentId);
         Task<bool> FinishRentAsync(int rentId);
         Task<IList<RentDto>> GetPreviousRents(int userId);
         Task<IList<RentDto>> GetAcceptedRents();
         Task<IList<RentDto>> GetFinishedRents();
         Task<IList<RentDto>> GetPendingRents();
-
         Task<IList<RentDto>> GetDeclinedRents();
-        Task<bool> SendInvoiceAsync(int rentId);
         Task<IList<RentDto>> GetRentsByUser(int userId);
     }
 
@@ -64,24 +62,24 @@ namespace BerAuto.Services
             return _mapper.Map<RentDto>(rent);
         }
 
-        public async Task<bool> DeclineRentAsync(int orderId)
+        public async Task<bool> DeclineRentAsync(int rentId)
         {
             try
             {
                 var rentToDecline = await _context.Rents
-                    .FirstOrDefaultAsync(r => r.Id == orderId && r.RentStatus == RentStatus.Pending);
+                    .FirstOrDefaultAsync(r => r.Id == rentId && r.RentStatus == RentStatus.Pending);
 
                 if (rentToDecline == null)
                 {
-                    Console.WriteLine($"[INFO] No pending rent found with id: {orderId}");
-                    throw new Exception($"Nincs elutasítható bérlés ezzel az ID-val: {orderId}");
+                    Console.WriteLine($"[INFO] No pending rent found with id: {rentId}");
+                    throw new Exception($"Nincs elutasítható bérlés ezzel az ID-val: {rentId}");
                 }
 
                 rentToDecline.RentStatus = RentStatus.Denied;
 
                 var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == rentToDecline.CarId);
 
-                Console.WriteLine($"[INFO] Rent #{orderId} elutasítva. Email küldése: {rentToDecline.Email}");
+                Console.WriteLine($"[INFO] Rent #{rentId} elutasítva. Email küldése: {rentToDecline.Email}");
 
                 await _emailService.SendEmailAsync(
                     rentToDecline.Email,
@@ -111,20 +109,20 @@ namespace BerAuto.Services
             }
         }
 
-        public async Task<bool> AcceptRentAsync(int orderId)
+        public async Task<bool> AcceptRentAsync(int rentId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var acceptedRent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == orderId && o.RentStatus == RentStatus.Pending);
+                var acceptedRent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == RentStatus.Pending);
 
                 if (acceptedRent is null)
                 {
-                    throw new Exception($"No rent found with id: {orderId} or status is not pending");
+                    throw new Exception($"No rent found with id: {rentId} or status is not pending");
                 }
 
-                Console.WriteLine($"[Elfogadás] RentId: {orderId}, AddressId: {acceptedRent.AddressId}, Email: {acceptedRent.Email}");
+                Console.WriteLine($"[Elfogadás] RentId: {rentId}, AddressId: {acceptedRent.AddressId}, Email: {acceptedRent.Email}");
 
                 if (string.IsNullOrWhiteSpace(acceptedRent.Email))
                 {
@@ -138,7 +136,7 @@ namespace BerAuto.Services
                                 r.RentStatus == RentStatus.Pending &&
                                 r.StartDate <= acceptedRent.EndDate &&
                                 r.EndDate >= acceptedRent.StartDate &&
-                                r.Id != orderId)
+                                r.Id != rentId)
                     .ToListAsync();
 
                 foreach (var rent in deniedRents)
@@ -214,6 +212,41 @@ namespace BerAuto.Services
             {
                 throw new Exception($"No rent found with id: {rentId} or status is not accepted");
             }
+
+            var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == rent.CarId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == rent.UserId);
+            string name;
+
+            if (user == null) { name = "name"; }
+            else { name = user.Name; }
+
+            int days = (rent.EndDate.ToDateTime(TimeOnly.MinValue) - rent.StartDate.ToDateTime(TimeOnly.MinValue)).Days;
+            double amount = days * car.Price;
+
+            var invoice = new InvoiceDto
+            {
+                RentId = rentId,
+                CustomerName = name,
+                Car = car.Brand + " " + car.Model,
+                StartDate = rent.StartDate,
+                EndDate = rent.EndDate,
+                InvStartDate = DateOnly.FromDateTime(DateTime.Today),
+                InvEndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5)),
+                Days = days,
+                Price = car.Price,
+                TotalAmount = amount
+            };
+
+            var pdfBytes = _billingService.GenerateInvoicePdf(invoice);
+
+            await _emailService.SendEmailAsync(rent.Email,
+                    "Számlája érkezett", $@"
+                    Tisztelt Uram / Hölgyem! 
+
+                    Csatolva küldjük a számláját az autóbérlésről.
+
+                    BérAutó csapat", pdfBytes, "invoice.pdf");
+
             rent.RentStatus = RentStatus.Finished;
             _context.Rents.Update(rent);
             var result = await _context.SaveChangesAsync();
@@ -248,53 +281,6 @@ namespace BerAuto.Services
         {
             var rents = await _context.Rents.Where(r => r.RentStatus == RentStatus.Pending).Include(r =>r.Car).ToListAsync();
             return _mapper.Map<IList<RentDto>>(rents);
-        }
-
-        public async Task<bool> SendInvoiceAsync(int rentId)
-        {
-            var finishedRent = await _context.Rents.FirstOrDefaultAsync(o => o.Id == rentId && o.RentStatus == RentStatus.Finished);
-            if (finishedRent is null)
-            {
-                throw new Exception($"No rent found with id: {rentId} or status is not finished");
-            }
-
-            var car = await _context.Cars.FirstOrDefaultAsync(c => c.Id == finishedRent.CarId);
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == finishedRent.UserId);
-            string name;
-
-            if ( user == null ) { name = "name"; }
-                else { name = user.Name; }
-
-            int days = (finishedRent.EndDate.ToDateTime(TimeOnly.MinValue) -
-            finishedRent.StartDate.ToDateTime(TimeOnly.MinValue)).Days;
-            double amount = days * car.Price;
-
-            var invoice = new InvoiceDto
-                {
-                    RentId = rentId,
-                    CustomerName = name,
-                    Car = car.Brand + " " + car.Model,
-                    StartDate = finishedRent.StartDate,
-                    EndDate = finishedRent.EndDate,
-                    InvStartDate = DateOnly.FromDateTime(DateTime.Today),
-                    InvEndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5)),
-                    Days = days,
-                    Price = car.Price,
-                    TotalAmount = amount
-                };
-
-            var pdfBytes = _billingService.GenerateInvoicePdf(invoice);
-
-            await _emailService.SendEmailAsync(finishedRent.Email,
-                    "Számlája érkezett", $@"
-                    Tisztelt Uram / Hölgyem! 
-
-                    Csatolva küldjük a számláját az autóbérlésről.
-
-                    BérAutó", pdfBytes, "invoice.pdf");
-
-            await _context.SaveChangesAsync();
-            return true;
         }
 
         public async Task<IList<RentDto>> GetRentsByUser(int userId)

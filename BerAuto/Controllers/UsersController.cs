@@ -42,13 +42,13 @@ namespace BerAuto.Controllers
             }   
         }
 
-        [HttpPut("update-role-{id}")]
+        [HttpPut("update-role-{userId}")]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> UpdateRole(int id, RoleUpdateDto roleUpdateDto)
+        public async Task<IActionResult> UpdateRole(int userId, RoleUpdateDto roleUpdateDto)
         {
             try
             {
-                var result = await _userService.UpdateRoleAsync(id, roleUpdateDto);
+                var result = await _userService.UpdateRoleAsync(userId, roleUpdateDto);
                 return Ok(result);
             }
             catch (Exception exc)
@@ -57,13 +57,13 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpDelete("delete-role-{id}")]
+        [HttpDelete("delete-role-{roleId}")]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteRole(int roleId)
         {
             try
             {
-                var result = await _userService.DeleteRoleAsync(id);
+                var result = await _userService.DeleteRoleAsync(roleId);
 
                 return Ok();
 
@@ -163,13 +163,13 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{userId}")]
         //    [Authorize(Roles = "Administrator, Customer")] //?
-        public async Task<IActionResult> GetUser(int id)
+        public async Task<IActionResult> GetUser(int userId)
         {
             try
             {
-                var result = await _userService.GetUserAsync(id);
+                var result = await _userService.GetUserAsync(userId);
                 return Ok(result);
             }
             catch (Exception exc)

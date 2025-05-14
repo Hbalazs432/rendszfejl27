@@ -49,13 +49,13 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpPut("accept-rent/{orderId}")]
+        [HttpPut("accept-rent/{rentId}")]
         [Authorize(Roles = "Clerk")]
-        public async Task<IActionResult> Accept(int orderId)
+        public async Task<IActionResult> Accept(int rentId)
         {
             try
             {
-                var result = await _rentService.AcceptRentAsync(orderId);
+                var result = await _rentService.AcceptRentAsync(rentId);
                 return Ok();
             }
             catch (Exception exc)
@@ -65,13 +65,13 @@ namespace BerAuto.Controllers
         }
 
 
-        [HttpPut("decline-rent/{orderId}")]
+        [HttpPut("decline-rent/{rentId}")]
         [Authorize(Roles = "Clerk")]
-        public async Task<IActionResult> Decline(int orderId)
+        public async Task<IActionResult> Decline(int rentId)
         {
             try
             {
-                var result = await _rentService.DeclineRentAsync(orderId);
+                var result = await _rentService.DeclineRentAsync(rentId);
                 return Ok();
             }
             catch (Exception exc)
@@ -80,13 +80,13 @@ namespace BerAuto.Controllers
             }
         }
 
-        [HttpPut("finish-rent/{orderId}")]
+        [HttpPut("finish-rent/{rentId}")]
         [Authorize(Roles = "Clerk")]
-        public async Task<IActionResult> Finish(int orderId)
+        public async Task<IActionResult> Finish(int rentId)
         {
             try
             {
-                var result = await _rentService.FinishRentAsync(orderId);
+                var result = await _rentService.FinishRentAsync(rentId);
                 return Ok();
             }
             catch (Exception exc)
@@ -165,21 +165,6 @@ namespace BerAuto.Controllers
             {
                 var result = await _rentService.GetDeclinedRents();
                 return Ok(result);
-            }
-            catch (Exception exc)
-            {
-                return BadRequest(exc.Message);
-            }
-        }
-
-        [HttpPut("send-invoice/{orderId}")]
-        [Authorize(Roles = "Clerk")]
-        public async Task<IActionResult> SendInvoice(int orderId)
-        {
-            try
-            {
-                var result = await _rentService.SendInvoiceAsync(orderId);
-                return Ok();
             }
             catch (Exception exc)
             {
