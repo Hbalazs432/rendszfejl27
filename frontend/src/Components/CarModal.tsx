@@ -34,16 +34,18 @@ function CarModal({
  
      const handleStartDateChange = (date: Dayjs | null) =>{
        if(date){
+        const nativeDate = date.toDate();
          setstartDate(date)
-         console.log(date)
-         onDatesChangeStart(date)
+         console.log(nativeDate)
+         onDatesChangeStart(nativeDate)
       }
     }
     const handleEndDateChange = (date: Dayjs | null) =>{
       if(date){
+        const nativeDate = date.toDate();
         setendDate(date)
-        console.log(endDate)
-        onDatesChangeEnd(date)
+        console.log(nativeDate)
+        onDatesChangeEnd(nativeDate)
       }
     }
   

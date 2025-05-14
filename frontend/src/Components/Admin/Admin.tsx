@@ -121,18 +121,16 @@ function Admin() {
     });
   };
  
-  const handleUpload = async (e: FormEvent) => {
+  const handleCreate = async (e: FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");    
-     console.log(addedCar)
-
 
     function validateCarData(car: CarData): boolean {
        return Object.values(car).some(value =>
         value === 0 || value === "" || value === null || value === undefined
       );
+      
     }
-  
     if(validateCarData(addedCar)) {
       toast.error("Kérlek adj meg megfelelő adatokat");
       return;
@@ -214,7 +212,7 @@ function Admin() {
       >
         <Fade in={openCarModal}>
           <Box sx={style} className="bg-slate-400 rounded-lg text-center">
-            <form onSubmit={handleUpload}>
+            <form onSubmit={handleCreate}>
               <h1 className="text-center font-bold border-gray-500 rounded-lg">
                 Autó hozzáadása a rendszerbe
               </h1>
